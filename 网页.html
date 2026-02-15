@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+{% load static %}  <!-- 放在 <!DOCTYPE html> 之后、<html> 之前 -->
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0,maximum-scale=1.0, user-scalable=no">
+    
+  
+  <!-- <meta property="og:url" content="https://nn0721.icu/yl.html"/> -->
+  <!-- <meta property="og:title" content="资源整合链接-by阿离Alize"/>
+  <meta property="og:author" content="阿离Alize"/>
+  <meta property="og:type" content="article"/>
+  <meta property="og:image" content="Error, please check /random."/>
+  <meta property="og:description" content=""/>
+  <meta property="article:published_time" content="2024-10-31T23:24:00+08:00"/> -->
+  <!-- <meta property="article:published_first" content="0721_Galgame, https://nn0721.icu/yl.html" /> -->
+  <!-- <meta name="keywords" content="">
+  <meta name="description" content="资源整合链接-by阿离Alize" /> -->
+    <title>学习资源整合平台</title>
+
+  <link rel="stylesheet" href="{% static 'mdui-v1.0.2/css/mdui.min.css' %}">
+  <link rel="shortcut icon" href="{% static 'usr/themes/cuckoo/assets/images/favicon.ico' %}" />
+  <link rel="stylesheet" href="{% static 'usr/themes/cuckoo/assets/css/mdui.min.css' %}">
+  <link rel="stylesheet" href="{% static 'usr/themes/cuckoo/assets/css/atom-one-dark.min.css' %}">
+  <link rel="stylesheet" href="{% static 'usr/themes/cuckoo/assets/css/iconfont.min.css' %}">
+  <link rel="stylesheet" href="{% static 'usr/themes/cuckoo/assets/css/tocbot.min.css' %}">
+  <link rel="stylesheet" href="{% static 'usr/themes/cuckoo/assets/css/fancybox.min.css' %}">
+  <link rel="stylesheet" href="{% static 'usr/themes/cuckoo/assets/css/katex.min.css' %}">
+  <link rel="stylesheet" href="{% static 'usr/themes/cuckoo/assets/css/cuckoo.min.css' %}">
+  <!-- <link rel="sitemap" type="application/xml" href="/sitemap.xml" /> -->
+  <script src="{% static 'mdui-v1.0.2/js/mdui.min.js' %}"></script>
+  <style>body{font-family:Bold}</style><style>body{font-weight:Bold}</style><meta name="description" content="资源链接" />
+<meta name="generator" content="Typecho 1.2.1" />
+<meta name="template" content="cuckoo" />
+<!-- <link rel="alternate" type="application/rss+xml" title="友情链接(不分先后顺序) &raquo; 0721_Galgame &raquo; RSS 2.0" href="https://nn0721.icu/feed/yl.html" />
+<link rel="alternate" type="application/rdf+xml" title="友情链接(不分先后顺序) &raquo; 0721_Galgame &raquo; RSS 1.0" href="https://nn0721.icu/feed/rss/yl.html" />
+<link rel="alternate" type="application/atom+xml" title="友情链接(不分先后顺序) &raquo; 0721_Galgame &raquo; ATOM 1.0" href="https://nn0721.icu/feed/atom/yl.html" /> -->
+<style>
+  .index-filter{display: none}
+  .comment-textarea{background-image: url("{% static 'usr/themes/cuckoo/assets/images/dibu.png' %}");}
+  .index-img{background-image: url("{% static 'usr/themes/cuckoo/assets/images/loading.gif' %}")}
+  /* 背景容器基础样式 */
+  #dynamic-background{
+    width: 100%;
+    height: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: -1;
+  }
+  /* 背景关闭时的默认样式 */
+  .bg-disabled {
+    background-image: none !important;
+    background-color: #f5f5f5 !important;
+  }
+</style>
+</head>
+
+<body class="mdui-theme-primary-pink mdui-theme-accent-blue">
+  <!-- 替换背景容器的class为id，匹配轮播脚本 -->
+  <div id="dynamic-background"><div class="index-filter"></div></div>
+  
+  <marquee class="mdui-text-color-theme-accent" behavior="scroll" scrollamount="8">此网页的搜索功能仅限搜索Galgame游戏！请确保没有连接校园网时搜索喵~</marquee>
+  
+  <div class="mdui-appbar mdui-shadow-0 mdui-appbar-fixed mdui-appbar-scroll-hide">
+    <div class="mdui-toolbar">
+      <a class="mdui-btn mdui-btn-icon" mdui-drawer="{target: '.drawer', swipe: 'true', overlay: 'false'}">
+        <i class="mdui-icon material-icons">menu</i>
+      </a>
+      
+      <div class="mdui-toolbar-spacer"></div>
+      <div class="mdui-textfield mdui-textfield-expandable mdui-float-right appbar-search">
+        <button class="mdui-textfield-icon mdui-btn mdui-btn-icon"><i class="mdui-icon material-icons">search</i></button>
+        <form id="search" method="post" action="https://nn0721.icu/" role="search">
+          <input class="mdui-textfield-input" type="text" id="s" name="s" placeholder="搜索一下" />
+          <button type="submit" style="display:none;">搜索</button>
+        </form>
+        <button class="mdui-textfield-close mdui-btn mdui-btn-icon"><i class="mdui-icon material-icons">close</i></button>
+      </div>
+      <button class="mdui-textfield-close mdui-btn mdui-btn-icon mdui-ripple" onclick="window.open('https://nn0721.icu/random.html', '_blank')" mdui-tooltip="{content: '随机一部游戏'}">
+        <i class="mdui-icon material-icons">casino</i>
+      </button>
+      <button class="mdui-textfield-close mdui-btn mdui-btn-icon mdui-ripple" id="toggle-tx" mdui-tooltip="{content: '樱花落叶显示'}">
+        <i class="mdui-icon material-icons">filter_vintage</i>
+      </button>
+      <button class="mdui-textfield-close mdui-btn mdui-btn-icon mdui-ripple" id="toggle-bg" mdui-tooltip="{content: '动态背景显示'}">
+        <i class="mdui-icon material-icons">wallpaper</i>
+      </button>
+      <button onclick="brightness()" id="brightness" class="mdui-textfield-close mdui-btn mdui-btn-icon mdui-ripple" mdui-tooltip="{content: '切换日夜模式'}"><i class="mdui-icon material-icons">brightness_5</i>
+      </button>
+    </div>
+  </div>
+  <div class="mdui-drawer mdui-drawer-close mdui-drawer-full-height drawer">
+    <div class="drawer-img"><img class="mdui-img-circle" src="{% static 'usr/themes/cuckoo/assets/images/logo.png' %}" /></div>
+    <div class="drawer-contact">
+          </div>
+    <div class="mdui-divider"></div>
+    <ul class="mdui-list drawer-list" mdui-collapse="{accordion: true}">
+      <a href="https://nn0721.icu/" mdui-drawer-close>
+        <li class="mdui-list-item mdui-ripple"><i class="mdui-list-item-icon mdui-icon material-icons">home</i>
+          <div class="mdui-list-item-content">首页</div>
+        </li>
+      </a>
+      <!-- <a href="https://dearestie.xyz?ref_id=f306a553-d164-47b0-84f3-8281c9caa410" target="_blank" onclick="gtag('event', 'fengyue', { 'event_category': 'fengyue', 'event_label': 'fengyue' });" mdui-drawer-close>
+            <li class="mdui-list-item mdui-ripple"><i class="mdui-list-item-icon mdui-icon material-icons">link</i>
+                <div class="mdui-list-item-content mdui-text-color-purple-a400" style="font-weight: 700;">💋 Ai女友(在线畅玩)</div>
+            </li>
+        </a> -->
+      <a href="https://nn0721.icu/2111.html" class="mdui-list-item mdui-ripple" mdui-drawer-close>
+        <i class="mdui-icon material-icons mdui-list-item-icon">assignment</i>
+        <div class="mdui-list-item-content">失效反馈</div>
+       </a><a href="https://nn0721.icu/bangumi.html" class="mdui-list-item mdui-ripple" mdui-drawer-close>
+        <i class="mdui-icon material-icons mdui-list-item-icon">video_library</i>
+        <div class="mdui-list-item-content">我的追番</div>
+       </a><a href="https://nn0721.icu/yl.html" class="mdui-list-item mdui-ripple" mdui-drawer-close>
+        <i class="mdui-icon material-icons mdui-list-item-icon">group</i>
+        <div class="mdui-list-item-content">友情链接</div>
+       </a><a href="https://nn0721.icu/pl.html" class="mdui-list-item mdui-ripple" mdui-drawer-close>
+        <i class="mdui-icon material-icons mdui-list-item-icon">comment</i>
+        <div class="mdui-list-item-content">全站评论(加载慢)</div>
+       </a><a href="https://nn0721.icu/about.html" class="mdui-list-item mdui-ripple" mdui-drawer-close>
+        <i class="mdui-icon material-icons mdui-list-item-icon">perm_contact_calendar</i>
+        <div class="mdui-list-item-content">关于本站</div>
+       </a><div class="mdui-divider"></div><a href="https://nn0721.icu/index.php/sitemap" class="mdui-list-item mdui-ripple" mdui-drawer-close>
+        <i class="mdui-icon material-icons mdui-list-item-icon">map</i>
+        <div class="mdui-list-item-content">网站地图</div>
+       </a><a href="https://nn0721.icu/feed/" class="mdui-list-item mdui-ripple" mdui-drawer-close>
+        <i class="mdui-icon material-icons mdui-list-item-icon">rss_feed</i>
+        <div class="mdui-list-item-content">文章订阅</div>
+       </a><a href="https://www.baidu.com/" class="mdui-list-item mdui-ripple" mdui-drawer-close>
+        <i class="mdui-icon material-icons mdui-list-item-icon">rss_feed</i>
+        <div class="mdui-list-item-content">评论订阅</div>
+       </a>    </ul>
+    
+    <!--左上角侧栏底部图片-->
+    <img src="{% static 'usr/themes/cuckoo/assets/images/ca03_02s.png' %}" alt="侧栏底部" style="width: 100%; height: auto; display: block; margin-top: -200px;">
+    
+      </div>
+  <div class="index-container">
+  <div class="mdui-col-md-8">
+    <div class="mdui-card post-card">
+      <div class="mdui-card-media post-card-media mdui-color-transparent post-card-media-normal">
+                <div class="mdui-card-media-covered">
+          <div class="mdui-card-primary">
+            <div class="mdui-card-primary-title">资源链接</div>
+            <div class="mdui-card-primary-subtitle">编写时间 2026-01-29 | 阅读时间: 约 1 分钟 | 分类:  </div>
+          </div>
+        </div>
+      </div>
+      <div class="post-content mdui-typo">
+        <!--more--><div class="mdui-panel" mdui-panel>
+  <div class="mdui-panel-item">
+    <div class="mdui-panel-item-header mdui-ripple">本站信息</div>
+      <div class="mdui-panel-item-body">
+        <h3>网站名称：学习资源整合平台</h3>
+        <h3>网站简介：一个简洁美丽的学习资源站</h3>
+        <h3>网站链接：<a style="color: #69F0AE;" href="{% url 'hdbcnal' %}" target="_blank">学习资源整合平台</a></h3>
+        <h3>网站favicon：<a style="color: #69F0AE;" href="{% static 'usr/themes/cuckoo/assets/images/favicon.ico' %}" target="_blank">学习资源整合平台-favicon</a></h3>
+        <h3>网站图片：<a style="color: #69F0AE;" href="{% static 'usr/themes/cuckoo/assets/images/logo.png' %}" target="_blank">学习资源整合平台-logo</a></h3>
+      </div><p></div><br></div></p><div class="links-card mdui-shadow-10">
+    <div class="links-img"><img class="mdui-img-circle" src="{% static 'usr/themes/cuckoo/assets/images/WMMT6RR.png' %}" loading="lazy"></div>
+    <div class="links-describe links-text"><a class="mdui-text-color-theme-accent" href="https://tsingtao.wm5dx.plus/" target="_blank">Miraiken Tsingtao</a></div>
+    <div class="links-describe links-text">Tsingtao私人游戏服务器网站，可免费游玩湾岸6RR</div>
+</div><p></br></p><div class="links-card mdui-shadow-10">
+    <div class="links-img"><img class="mdui-img-circle" src="{% static 'usr/themes/cuckoo/assets/images/IDTA.png' %}" loading="lazy"></div>
+    <div class="links-describe links-text"><a class="mdui-text-color-theme-accent" href="https://arcadezone.cn/" target="_blank">ArcadeZone</a></div>
+    <div class="links-describe links-text">ArcadeZone私人游戏服务器网站，可免费游玩头文字D激斗</div>
+</div><p></br></p><div class="links-card mdui-shadow-10">
+    <div class="links-img"><img class="mdui-img-circle" src="{% static 'usr/themes/cuckoo/assets/images/0721_favicon.ico' %}" loading="lazy"></div>
+    <div class="links-describe links-text"><a class="mdui-text-color-theme-accent" href="https://nn0721.icu" target="_blank">0721_Galgame</a></div>
+    <div class="links-describe links-text">一个简洁美丽的Gal资源站</div>
+</div><p></br></p><div class="links-card mdui-shadow-10">
+    <div class="links-img"><img class="mdui-img-circle" src="{% static 'usr/themes/cuckoo/assets/images/syzx.png' %}" loading="lazy"></div>
+    <div class="links-describe links-text"><a class="mdui-text-color-theme-accent" href="https://acgsyzx.me" target="_blank">神隐之乡</a></div>
+    <div class="links-describe links-text">神隐之处是故乡-本站是博客式免费GAL资源分享站点</div>
+</div><p></br></p><div class="links-card mdui-shadow-10">
+    <div class="links-img"><img class="mdui-img-circle" src="{% static 'usr/themes/cuckoo/assets/images/qingju.png' %}" loading="lazy"></div>
+    <div class="links-describe links-text"><a class="mdui-text-color-theme-accent" href="https://qingju.org" target="_blank">青桔网</a></div>
+    <div class="links-describe links-text">由青桔移植组建立的非盈利型galgame免费分享平台（移动网络可能需要挂加速器）</div>
+</div><p></br></p><div class="links-card mdui-shadow-10">
+    <div class="links-img"><img class="mdui-img-circle" src="{% static 'usr/themes/cuckoo/assets/images/ACGBox.png' %}" loading="lazy"></div>
+    <div class="links-describe links-text"><a class="mdui-text-color-theme-accent" href="https://www.acgbox.link" target="_blank">ACG盒子</a></div>
+    <div class="links-describe links-text">专注ACG的导航盒子</div>
+</div><p></br></p><div class="links-card mdui-shadow-10">
+    <div class="links-img"><img class="mdui-img-circle" src="{% static 'usr/themes/cuckoo/assets/images/kun_galgame.webp' %}" loading="lazy"></div>
+    <div class="links-describe links-text"><a class="mdui-text-color-theme-accent" href="https://www.kungal.com" target="_blank">鲲Galgame论坛</a></div>
+    <div class="links-describe links-text">最萌的Galgame论坛</div>
+</div><p></br></p><div class="links-card mdui-shadow-10">
+    <div class="links-img"><img class="mdui-img-circle" src="{% static 'usr/themes/cuckoo/assets/images/mikugame.png' %}" loading="lazy"></div>
+    <div class="links-describe links-text"><a class="mdui-text-color-theme-accent" href="https://mikugame.icu" target="_blank">MikuGame</a></div>
+    <div class="links-describe links-text">MikuGame初音游戏库</div>
+</div><p></br></p><div class="links-card mdui-shadow-10">
+    <div class="links-img"><img class="mdui-img-circle" src="{% static 'usr/themes/cuckoo/assets/images/jiuliacg.webp' %}" loading="lazy"></div>
+    <div class="links-describe links-text"><a class="mdui-text-color-theme-accent" href="https://jiuliacg.com" target="_blank">玖黎ACG</a></div>
+    <div class="links-describe links-text">免费分享Gal，Cos，Asmr的网站</div>
+</div><p></br></p><div class="links-card mdui-shadow-10">
+    <div class="links-img"><img class="mdui-img-circle" src="{% static 'usr/themes/cuckoo/assets/images/qimengacg.png' %}" loading="lazy"></div>
+    <div class="links-describe links-text"><a class="mdui-text-color-theme-accent" href="https://game.acgs.one" target="_blank">绮梦ACG</a></div>
+    <div class="links-describe links-text">专注分享次元世界 免费Gal下载</div>
+</div><p></br></p><div class="links-card mdui-shadow-10">
+    <div class="links-img"><img class="mdui-img-circle" src="{% static 'usr/themes/cuckoo/assets/images/kisushiina.png' %}" loading="lazy"></div>
+    <div class="links-describe links-text"><a class="mdui-text-color-theme-accent" href="https://kisugal.icu" target="_blank">KisuShiina</a></div>
+    <div class="links-describe links-text">无任何门槛的Gal资源</div>
+</div><p></br></p><div class="links-card mdui-shadow-10">
+    <div class="links-img"><img class="mdui-img-circle" src="{% static 'usr/themes/cuckoo/assets/images/lycorisgal.webp' %}" loading="lazy"></div>
+    <div class="links-describe links-text"><a class="mdui-text-color-theme-accent" href="https://www.lycorisgal.com" target="_blank">LyCorisGAL</a></div>
+    <div class="links-describe links-text">Gal引导资源站</div>
+</div><p></br></p><div class="links-card mdui-shadow-10">
+    <div class="links-img"><img class="mdui-img-circle" src="{% static 'usr/themes/cuckoo/assets/images/galgameyueyao.png' %}" loading="lazy"></div>
+    <div class="links-describe links-text"><a class="mdui-text-color-theme-accent" href="https://www.sayafx.top" target="_blank">Galgame月谣</a></div>
+    <div class="links-describe links-text">Galgame资源整合</div>
+</div><p></br></p><div class="links-card mdui-shadow-10">
+    <div class="links-img"><img class="mdui-img-circle" src="{% static 'usr/themes/cuckoo/assets/images/yusolab.png' %}" loading="lazy"></div>
+    <div class="links-describe links-text"><a class="mdui-text-color-theme-accent" href="https://kiraui.org" target="_blank">YuSoLAB</a></div>
+    <div class="links-describe links-text">二次元综合网站</div>
+</div>      </div>
+    </div>
+
+</div>
+
+  <div class="mdui-col-md-4">
+  <!--侧栏logo-->
+  <div class="mdui-card mdui-hoverable sidebar-info" style="background-size:cover ; background-position:center ; background-repeat:no-repeat ; background-image:url('')">
+      
+    <div class="sidebar-info-img">
+      <div class="mdui-img-circle mdui-shadow-3" style="background-image: url('{% static 'usr/themes/cuckoo/assets/images/logo.png' %}');"></div>
+    </div>
+    </br></br></br>
+    <div style="text-align: center;"><a class="mdui-btn mdui-btn-raised mdui-ripple mdui-color-theme-accent" href="{% url 'dashang' %}" target="_blank" style="text-decoration: none;">投喂大佬</a></div>
+    <div class="sidebar-info-body">
+        <span class="sidebar-info-name"><a href="{% url 'beta' %}" target="_self" style="text-decoration: none;">beta版入口</a></span>
+        |<!--分割竖线-->
+        <span class="sidebar-info-name"><a href="{% url 'hdbcnal' %}" target="_self" style="text-decoration: none;">正式版入口</a></span>
+        <h2 class="sidebar-info-name mdui-text-color-theme-accent">阿离Alize</h2>
+    </div>
+  </div>
+</div>
+</div>
+
+<footer>
+    
+    
+  </br></br>
+    
+    <!-- 背景轮播脚本（修复开关功能） -->
+    <script>
+      // 桌面端和移动端的背景图片集合（分别设置不同的图片）
+      const desktopBackgrounds = [
+            "{% static 'diannao/wallhaven-72o2go.webp' %}",
+            "{% static 'diannao/wallhaven-4vq65n.webp' %}",
+            "{% static 'diannao/wallhaven-eow9vk.webp' %}",
+            "{% static 'diannao/wallhaven-vm7xp8.webp' %}",
+            "{% static 'diannao/wallhaven-956wdd.webp' %}",
+            "{% static 'diannao/wallhaven-mp21ok.webp' %}",
+            "{% static 'diannao/wallhaven-y89mwl.webp' %}",
+            "{% static 'diannao/wallhaven-47wvl9.webp' %}",
+            "{% static 'diannao/wallhaven-nmoox9.webp' %}",
+            "{% static 'diannao/wallhaven-vgdw7p.webp' %}",
+            "{% static 'diannao/wallhaven-49yzek.webp' %}",
+            "{% static 'diannao/88c178b57e8e0f5e5c2bdd8e2df426c5.webp' %}",
+            "{% static 'diannao/63fa3b19681d210cbba647c1171f7874.webp' %}",
+            "{% static 'diannao/5bc9437da759d49a746669969f981fe8.webp' %}",
+            "{% static 'diannao/c663a1c5369987b40518dbee406357d5.webp' %}",
+            "{% static 'diannao/b8b70058051a9536f743fb3501aebd05.webp' %}",
+            "{% static 'diannao/bg_0_coma.png' %}",
+            "{% static 'diannao/illust_75778903_20200206_165709.jpg' %}",
+            "{% static 'diannao/31112400eok8.webp' %}",
+            "{% static 'diannao/27157_1_d2.jpg' %}",
+            "{% static 'diannao/wp14514683.webp' %}",
+            "{% static 'diannao/R-C.jpg'}",
+            "{% static 'diannao/R-C (1).jpg' %}",
+            "{% static 'diannao/2563059592_1664902638.jpg' %}",
+            "{% static 'diannao/d610b1102a5ec6f632cdb19f80663158_8952848721543698387.jpg' %}",
+            "{% static 'diannao/img149.webp' %}",
+      ];
+      
+      const mobileBackgrounds = [
+    "{% static 'shouji/wallhaven-e77878.webp' %}",
+    "{% static 'shouji/wallhaven-d59zqm.webp' %}",
+    "{% static 'shouji/wallhaven-g7x12q.webp' %}",
+    "{% static 'shouji/wallhaven-w8vzjq.webp' %}",
+    "{% static 'shouji/wallhaven-13kwog.webp' %}",
+    "{% static 'shouji/illust_77340151_20200206_170829.jpg' %}",
+    "{% static 'shouji/79519821_p0.jpg' %}",
+    "{% static 'shouji/79389478_p0.jpg' %}",
+    "{% static 'shouji/78909963_p0.jpg' %}",
+    "{% static 'shouji/79620287_p0.jpg' %}",
+    "{% static 'shouji/79519023_p0.png' %}",
+    "{% static 'shouji/79593713_p0.jpg' %}",
+    "{% static 'shouji/20200803075651_pubjh.jpg' %}",
+    "{% static 'shouji/Atri_My_Dear_Moments-cover.jpg' %}",
+    "{% static 'shouji/20220603100527_07645.jpg' %}",
+      ];
+      
+      // 获取背景元素和开关按钮
+      const backgroundElement = document.getElementById('dynamic-background');
+      const bgToggleBtn = document.getElementById('toggle-bg');
+      let currentIndex = 0;
+      let backgrounds = [];
+      let slideInterval;
+      // 读取本地存储的背景开关状态（默认开启）
+      let bgEnabled = localStorage.getItem('bgEffect') !== 'false';
+
+      // 初始化背景开关按钮样式
+      function initBgBtnStyle() {
+        if (bgEnabled) {
+          bgToggleBtn.classList.remove('mdui-color-grey');
+          bgToggleBtn.classList.add('mdui-color-transparent-grey');
+          backgroundElement.classList.remove('bg-disabled');
+        } else {
+          bgToggleBtn.classList.remove('mdui-color-blue-grey');
+          bgToggleBtn.classList.add('mdui-color-grey');
+          backgroundElement.classList.add('bg-disabled');
+        }
+      }
+
+      // 切换背景开关状态
+      function toggleBgState() {
+        bgEnabled = !bgEnabled;
+        localStorage.setItem('bgEffect', bgEnabled);
+        initBgBtnStyle();
+        
+        if (bgEnabled) {
+          // 开启背景：重新初始化轮播
+          initBackgroundSlider();
+        } else {
+          // 关闭背景：停止轮播，重置样式
+          stopSlideInterval();
+          backgroundElement.style.backgroundImage = 'none';
+          backgroundElement.classList.add('bg-disabled');
+        }
+      }
+      
+      // 初始化背景轮播
+      function initBackgroundSlider() {
+        if (!bgEnabled) return;
+        
+        // 根据屏幕宽度选择对应的图片集合
+        if (window.innerWidth < 768) { // 移动端阈值
+          backgrounds = mobileBackgrounds;
+        } else { // 桌面端
+          backgrounds = desktopBackgrounds;
+        }
+        
+        // 移除禁用样式
+        backgroundElement.classList.remove('bg-disabled');
+        // 设置初始背景
+        setBackground(0);
+        // 启动轮播
+        startSlideInterval();
+      }
+      
+      // 设置背景图片
+      function setBackground(index) {
+        if (!bgEnabled) return;
+        backgroundElement.style.backgroundImage = `url(${backgrounds[index]})`;
+        backgroundElement.style.backgroundSize = 'cover';
+        backgroundElement.style.backgroundPosition = 'center';
+        backgroundElement.style.transition = 'background-image 1s ease-in-out';
+        currentIndex = index;
+      }
+
+      // 启动轮播定时器
+      function startSlideInterval() {
+        if (!bgEnabled) return;
+        // 清除现有定时器
+        if (slideInterval) clearInterval(slideInterval);
+        
+        // 每5秒切换一次背景（随机切换）
+        slideInterval = setInterval(() => {
+          if (!bgEnabled) return;
+          // 生成随机索引（避免与当前索引重复）
+          let nextIndex;
+          // 如果只有一张图片，直接使用0
+          if (backgrounds.length === 1) {
+            nextIndex = 0;
+          } else {
+            // 循环生成直到与当前索引不同
+            do {
+              nextIndex = Math.floor(Math.random() * backgrounds.length);
+            } while (nextIndex === currentIndex);
+          }
+          setBackground(nextIndex);
+        }, 5000);
+      }
+
+      // 停止轮播定时器
+      function stopSlideInterval() {
+        if (slideInterval) {
+          clearInterval(slideInterval);
+          slideInterval = null;
+        }
+      }
+      
+      // 监听窗口大小变化，动态切换图片集合
+      window.addEventListener('resize', () => {
+        if (!bgEnabled) return;
+        const isMobile = window.innerWidth < 768;
+        const wasMobile = backgrounds === mobileBackgrounds;
+        
+        // 只有当设备类型发生变化时才重新初始化
+        if (isMobile !== wasMobile) {
+          initBackgroundSlider();
+        }
+      });
+      
+      // 背景开关按钮点击事件
+      bgToggleBtn.addEventListener('click', toggleBgState);
+      
+      // 页面加载完成后初始化
+      window.addEventListener('load', () => {
+        initBgBtnStyle();
+        initBackgroundSlider();
+      });
+    </script>
+    
+    <!--网站樱花-->
+    <script>
+        // 樱花状态管理
+        document.addEventListener('DOMContentLoaded', function() {
+          const toggleyh = document.getElementById('toggle-tx');
+          
+          // 获取存储的状态（默认关闭）
+          const yhEnabled = localStorage.getItem('yhEffect') === 'true';
+          
+          // 设置按钮状态
+          if (!yhEnabled) {
+            toggleyh.classList.remove('mdui-color-blue-grey');
+            toggleyh.classList.add('mdui-color-grey');
+          }
+          
+          // 更新状态
+          if (yhEnabled) {
+            const script = document.createElement('script');
+            script.src = "{% static 'usr/themes/cuckoo/assets/js/Blossom.js' %}";//樱花落叶效果
+            document.body.appendChild(script);
+            console.log('开启樱花落叶');
+          } else {
+            console.log('关闭樱花落叶');
+          }
+          
+          // 按钮点击事件
+          toggleyh.addEventListener('click', function() {
+            const yhState = !yhEnabled;
+            localStorage.setItem('yhEffect', yhState);
+            location.reload(); // 刷新网页
+          });
+        });
+    </script>
+    
+    <!--运行时间-->
+    本站已经运行了 : <span id="span_dt_dt" style="color: #2F889A"></span>
+    <script>
+        function show_date_time(){
+        window.setTimeout("show_date_time()", 1000);
+        BirthDay=new Date("01/29/2026 16:19:00");
+        today=new Date();
+        timeold=(today.getTime()-BirthDay.getTime());
+        sectimeold=timeold/1000
+        secondsold=Math.floor(sectimeold);
+        msPerDay=24*60*60*1000
+        e_daysold=timeold/msPerDay
+        daysold=Math.floor(e_daysold);
+        e_hrsold=(e_daysold-daysold)*24;
+        hrsold=Math.floor(e_hrsold);
+        e_minsold=(e_hrsold-hrsold)*60;
+        minsold=Math.floor((e_hrsold-hrsold)*60);
+        seconds=Math.floor((e_minsold-minsold)*60);
+        span_dt_dt.innerHTML='<font style="color:#FF00FF">'+daysold+'</font> 天 <font style="color:#FF00FF">'+hrsold+'</font> 时 <font style="color:#FF00FF">'+minsold+'</font> 分 <font style="color:#FF00FF">'+seconds+'</font> 秒';
+        }
+        show_date_time();
+    </script>
+    
+    
+    <!--音乐播放{，原歌单“3001795926”-->
+    <script src="{% static 'usr/themes/cuckoo/assets/js/xf-MusicPlayer.min.js' %}"></script>
+    <div id="xf-MusicPlayer" data-cdnName="{% static 'usr/themes/cuckoo/assets/js' %}"  data-themeColor="xf-girlPink" data-songList="434256234" data-random="true"></div>
+    
+  </br></br>
+  
+  <span>2026-01-29</span> | <span><a href="https://nn0721.icu">0721_Galgame</a> </br></br></br></span></a>
+  
+  <!-- <p>本站内容收集自互联网，如有内容侵犯了您的权益，请联系删除相关内容。<br><br><span id="cuckoo-copy">Theme <a href="https://github.com/bhaoo/cuckoo" target="_blank">Cuckoo</a> by <a href="https://dwd.moe/" target="_blank">Bhao</a>｜Powered By <a href="http://www.typecho.org" target="_blank">Typecho</a></span></p></footer> -->
+    <script src="{% static 'usr/themes/cuckoo/assets/js/mdui.min.js' %}"></script>
+    <script src="{% static 'usr/themes/cuckoo/assets/js/highlight.min.js' %}"></script>
+    <script src="{% static 'usr/themes/cuckoo/assets/js/katex.min.js' %}"></script>
+    <script src="{% static 'usr/themes/cuckoo/assets/js/katex-auto-render.min.js' %}"></script>
+    <!-- <script src="https://nn0721.icu/usr/themes/cuckoo/assets/js/lazyload.min.js"></script> -->
+    <script src="{% static 'usr/themes/cuckoo/assets/js/fancybox.umd.min.js' %}"></script>
+    <script src="{% static 'usr/themes/cuckoo/assets/js/qrcode.min.js' %}"></script>
+    <script src="{% static 'usr/themes/cuckoo/assets/js/clipboard.min.js' %}"></script>
+    <script src="{% static 'usr/themes/cuckoo/assets/js/smoothscroll.min.js' %}"></script>
+    <script src="{% static 'usr/themes/cuckoo/assets/js/infinite-scroll.pkgd.min.js' %}"></script>
+    <script src="{% static 'usr/themes/cuckoo/assets/js/pjax.min.js' %}"></script>
+    <script src="{% static 'usr/themes/cuckoo/assets/js/cuckoo.min.js' %}"></script>
+    <script src="{% static 'usr/themes/cuckoo/assets/js/comments.min.js' %}"></script>
+    <script src="{% static 'usr/themes/cuckoo/assets/js/tocbot.min.js' %}"></script>
+    <script src="{% static 'usr/themes/cuckoo/assets/js/nprogress.min.js' %}"></script>
+    <script>hljs.highlightAll();</script>
+    <script>var nowHour=new Date().getHours();if(nowHour>18 && nowHour<24){darkContent('深色模式开启')};</script>
+</body>
+</html>

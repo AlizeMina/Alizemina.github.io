@@ -1,0 +1,1761 @@
+<!DOCTYPE html>
+{% load static %}  <!-- 放在 <!DOCTYPE html> 之后、<html> 之前 -->
+<html lang="zh-CN">
+<head>
+  <link rel="icon" href="{% static 'usr/themes/cuckoo/assets/images/favicon.ico' %}" type="image/x-icon">
+  <link rel="stylesheet" href="{% static 'usr/themes/cuckoo/assets/css/mdui.min.css' %}">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>学习资源整合平台</title>
+  <!-- 引入Tailwind CSS -->
+  <script src="{% static 'cdn.tailwindcss.com/3.4.17' %}"></script>
+  <!-- 引入Font Awesome -->
+  <link href="{% static 'Font-Awesome-7.x/css/all.min.css' %}" rel="stylesheet">
+  <link href="{% static 'usr/themes/cuckoo/assets/css/Material_Icons.css' %}" rel="stylesheet">
+  <!-- 配置Tailwind自定义主题 -->
+  <!-- CDN 引入（推荐） -->
+<!--  <link rel="stylesheet" href="https://api.hypcvgm.top/NeteaseMiniPlayer/netease-mini-player-v2.css">-->
+<!--  <script src="https://api.hypcvgm.top/NeteaseMiniPlayer/netease-mini-player-v2.js"></script>-->
+  <script src="{% static 'cdn.jsdelivr.net/npm/mdui@0.4.3/dist/js/mdui.min.js' %}"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#165DFF',
+            secondary: '#36CFC9',
+            accent: '#722ED1',
+            neutral: '#F5F7FA',
+            dark: '#1D2129',
+          },
+          fontFamily: {
+            inter: ['Inter', 'system-ui', 'sans-serif'],
+          },
+          boxShadow: {
+            'card': '0 4px 20px rgba(0, 0, 0, 0.08)',
+            'card-hover': '0 8px 30px rgba(22, 93, 255, 0.15)',
+          }
+        },
+      }
+    }
+  </script>
+  <!-- 自定义工具类 -->
+  <style type="text/tailwindcss">
+    @layer utilities {
+      .content-auto {
+        content-visibility: auto;
+      }
+      .card-transition {
+        transition: all 0.3s ease;
+      }
+      .text-shadow {
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+      .bg-gradient {
+        background: linear-gradient(135deg, #165DFF 0%, #722ED1 100%);
+      }
+      .modal-backdrop {
+        backdrop-filter: blur(3px);
+      }
+    }
+  </style>
+  <style>
+    /* 全局样式 */
+    body {
+      scroll-behavior: smooth;
+    }
+    
+    /* 加载动画 */
+    .loader {
+      border-top-color: #165DFF;
+      animation: spinner 0.8s linear infinite;
+    }
+    
+    @keyframes spinner {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .resource-card {
+      background-color: rgba(255, 255, 255, 0.5) !important;
+    }
+
+    /* 资源卡片悬停效果 */
+    .resource-card:hover {
+      transform: translateY(-5px);
+      background-color: rgba(255, 255, 255, 0.8) !important;
+    }
+    
+    /* 密码复制提示动画 */
+    @keyframes fadeInOut {
+      0%, 100% { opacity: 0; }
+      10%, 90% { opacity: 1; }
+    }
+    
+    .copy-toast {
+      animation: fadeInOut 2s ease-in-out;
+    }
+
+    /* 弹窗动画 */
+    @keyframes modalFadeIn {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .modal-animation {
+      animation: modalFadeIn 0.3s ease-out forwards;
+    }
+
+    /* 资源收藏按钮样式 */
+    .favorite-btn {
+      transition: all 0.2s ease;
+    }
+    
+    .favorite-btn.active {
+      color: #ff4d4f;
+    }
+    
+    /* 加载更多按钮样式 */
+    .load-more-btn {
+      transition: all 0.3s ease;
+    }
+    
+    .load-more-btn:hover {
+      transform: translateY(-2px);
+    }
+    
+    /* 加载中状态 */
+    .loading {
+      opacity: 0.7;
+      cursor: not-allowed;
+    }
+    
+    /* 无更多资源提示 */
+    .no-more {
+      color: #9ca3af;
+      cursor: default;
+    }
+    
+    .no-more:hover {
+      transform: none;
+      background-color: #ffffff;
+    }
+   
+  </style>
+
+</head>
+<body class="font-inter bg-neutral text-dark min-h-screen flex flex-col mdui-theme-primary-pink mdui-theme-accent-blue">
+    <!--网站背景轮播-->
+  <div id="dynamic-background" style="width: 100%; height: 100%; position: fixed;z-index: -1;"></div>
+  <marquee class="mdui-text-color-theme-accent" behavior="scroll" scrollamount="8">
+<i class="fa fa-bullhorn"></i>  阿离有话说！V2版本来啦！具体更新内容请查看更新公告！移动端更新公告入口在折叠菜单栏里！
+  </marquee>
+  <!-- 导航栏 -->
+   <!-- 导航栏背景模糊 -->
+  <header class="sticky top-0 z-50 bg-white/10 backdrop-blur-sm shadow-sm transition-all duration-300">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between items-center h-16">
+        <!-- 网站Logo -->
+        <div class="flex items-center space-x-2">
+            <!-- 使用img标签加载指定图片作为Logo -->
+            <i class="fa fa-graduation-cap text-primary text-2xl"></i>
+            <span class="text-xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+            学习资源库
+              <span class="text-sm text-gray-500 italic bg-none">by阿离Alize</span>
+          </span>
+        </div>
+        
+        <!-- 在导航栏Logo右侧添加更新公告按钮 -->
+        <!-- 找到导航栏Logo部分，在其后面添加 -->
+        <div class="hidden md:block ml-6">
+          <button id="update-notice-btn" class="bg-accent/10 hover:bg-accent/20 text-accent px-4 py-2 rounded-lg transition-all flex items-center space-x-1">
+            <i class="fa fa-bullhorn"></i>
+            <span>更新公告</span>
+          </button>
+        </div>
+
+        <!-- 在移动端菜单中添加更新公告按钮 -->
+        <!-- 在移动端菜单的第一个链接前添加 -->
+        
+        <!-- 更新公告弹窗 - 修复居中问题 -->
+        <div id="update-notice-modal" class="fixed inset-0 bg-black/50 modal-backdrop z-50 hidden items-center justify-center p-4">
+          <div class="bg-white rounded-xl p-6 max-w-4xl w-full modal-animation max-h-[60vh] flex flex-col">
+            <!-- 弹窗头部 -->
+            <div class="text-center mb-6 border-b pb-4">
+              <h3 class="text-xl font-bold">更新公告</h3>
+            </div>
+            
+            <!-- 弹窗内容区 -->
+            <div class="flex flex-1 overflow-hidden">
+              <!-- 左侧列表 -->
+              <div class="w-1/3 border-r overflow-y-auto">
+                <div class="update-item active p-4 hover:bg-gray-50 cursor-pointer border-l-4 border-primary">
+                  <div class="font-medium">V2.0.1.beta</div>
+                  <div class="text-sm text-gray-500">2026-1-16</div>
+                </div>
+                <div class="update-item p-4 hover:bg-gray-50 cursor-pointer">
+                  <div class="font-medium">V2版本预告</div>
+                  <div class="text-sm text-gray-500">2025-12-27</div>
+                </div>
+                <div class="update-item p-4 hover:bg-gray-50 cursor-pointer">
+                  <div class="font-medium">V1.1.4.beta</div>
+                  <div class="text-sm text-gray-500">2025-11-25</div>
+                </div>
+                <div class="update-item p-4 hover:bg-gray-50 cursor-pointer">
+                  <div class="font-medium">V1.1.3.beta</div>
+                  <div class="text-sm text-gray-500">2025-11-25</div>
+                </div>
+                <div class="update-item p-4 hover:bg-gray-50 cursor-pointer">
+                  <div class="font-medium">V1.1.2.beta</div>
+                  <div class="text-sm text-gray-500">2025-11-25</div>
+                </div>
+                <div class="update-item p-4 hover:bg-gray-50 cursor-pointer">
+                  <div class="font-medium">V1.0.1.beta</div>
+                  <div class="text-sm text-gray-500">2025-11-23</div>
+                </div>
+              </div>
+              
+              <!-- 右侧内容 -->
+              <div class="w-2/3 p-6 overflow-y-auto">
+                <div class="update-content active">
+                  <h4 class="text-lg font-bold mb-3">V2.0.1.beta 更新内容（V2.1.0.HDBCNAL更新内容）</h4>
+                  <ul class="space-y-2">
+                    <li class="flex items-start">
+                      <i class="fa fa-plus-circle text-green-500 mt-1 mr-2"></i>
+                      <span>1、新增樱花落叶效果！满树樱飞，不及你眉眼含笑。樱落满径，不及你半步走近。</span>
+                    </li>
+                    <li class="flex items-start">
+                      <i class="	fa fa-volume-up text-green-500 mt-1 mr-2"></i>
+                      <span>2、音乐播放器正式上线！歌单暂不支持自定义，感兴趣的话可以联系阿离，在你的非共享版本或服务器版本中修改为你喜欢的音乐歌单。</span>
+                    </li>
+                    <li class="flex items-start">
+                      <i class="fa fa-plus-circle text-green-500 mt-1 mr-2"></i>
+                      <span>3、新增随机播放壁纸功能，由于依赖外部壁纸链接，暂时无法自定义壁纸，但你可以在非共享版本或服务器版本中修改壁纸链接，换成你喜欢的壁纸。</span>
+                    </li>
+                    <li class="flex items-start">
+                      <i class="fa fa-wrench text-green-500 mt-1 mr-2"></i>
+                      <span>4、优化界面布局，更多状态细节展示，包括但不限于：鼠标悬停时的按钮/卡片的颜色变化，部分按钮的文字变化等。</span>
+                    </li>
+                    <li class="flex items-start">
+                      <i class="fa fa-exclamation-triangle text-yellow-500 mt-1 mr-2"></i>
+                      <span>5、修复已知问题，但部分库依赖大佬服务器内的运行文件，调用速度较慢，如组件无法加载，请切换较好的网络环境并重新加载。</span>
+                    </li>
+                    <li class="flex items-start">
+                      <i class="	fa fa-volume-up text-green-500 mt-1 mr-2"></i>
+                      <span>6、预告：将在未来V2版本加入打赏网页，但这并非强制性的，白嫖也可以正常使用！以后也会加入彩蛋网站整合页面，具体功能敬请期待！</span>
+                    </li>
+                  </ul>
+                </div>
+                <div class="update-content hidden">
+                  <h4 class="text-lg font-bold mb-3">作者的话（V2版本更新预告）</h4>
+                  <ul class="space-y-2">
+                    <li class="flex items-start">
+                      <span>阿离正在努力研发V2版本，预计发布时间未定，但现阶段已完成在机房电脑服务器版本中进行部分功能性测试，且效果优越！</span>
+                    </li>
+                    <li class="flex items-start">
+                      <span>由于资金原因，目前暂无个人服务器，暂时无法对公开版本（正式版及beta版）调用网页所需要的运行文件（css、js等），只能依赖外部现有大佬的服务器里面的文件，敬请谅解！</span>
+                    </li>
+                    <li class="flex items-start">
+                      <span>感兴趣的话，可以找阿离要服务器版本的文件，可以实现更多功能，例如自定义壁纸、自定义音乐歌单、自定义主题等。更多功能等你来开发！阿离将在服务器版本中努力同步更新最新功能，敬请期待！</span>
+                    </li>
+                    <li class="flex items-start">
+                      <span>V2版本将新增以下功能(现阶段已实现功能)：</span>
+                    </li>
+                    <li class="flex items-start">
+                      <i class="fa fa-plus-circle text-green-500 mt-1 mr-2"></i>
+                      <span>1、新增樱花落叶效果！（在服务器版本已通过测试）满树樱飞，不及你眉眼含笑。樱落满径，不及你半步走近。</span>
+                    </li>
+                    <li class="flex items-start">
+                      <i class="	fa fa-volume-up text-green-500 mt-1 mr-2"></i>
+                      <span>2、音乐播放器归属V2版本内容，但已在V1部分版本实现该功能，欢迎体验！歌单暂不支持自定义，感兴趣的话可以联系阿离，在你的非共享版本或服务器版本中修改为你喜欢的音乐歌单。</span>
+                    </li>
+                    <li class="flex items-start">
+                      <i class="fa fa-plus-circle text-green-500 mt-1 mr-2"></i>
+                      <span>3、新增随机播放壁纸功能，由于依赖外部壁纸API，暂时无法自定义壁纸，但你可以在非共享版本或服务器版本中修改api，使用你喜欢的壁纸API。</span>
+                    </li>
+                    <li class="flex items-start">
+                      <i class="fa fa-wrench text-green-500 mt-1 mr-2"></i>
+                      <span>4、优化界面布局，更多状态细节展示，例如鼠标悬停时的按钮/卡片的颜色变化，部分按钮的文字变化等。</span>
+                    </li>
+                    <li class="flex items-start">
+                      <i class="fa fa-exclamation-triangle text-yellow-500 mt-1 mr-2"></i>
+                      <span>5、修复已知问题，但部分库依赖大佬服务器内的运行文件，调用速度较慢，如组件无法加载，请切换较好的网络环境并重新加载。</span>
+                    </li>
+                  </ul>
+                </div>
+                <div class="update-content hidden">
+                  <h4 class="text-lg font-bold mb-3">V1.1.4.beta 更新内容（V1.3.0.HDBCNAL更新内容）</h4>
+                  <ul class="space-y-2">
+                    <li class="flex items-start">
+                      <i class="fa fa-exclamation-triangle text-red-500 mt-1 mr-2"></i>
+                      <span>浏览器缓存删除后不会保留收藏记录，但正常退出依旧会有保留，清理浏览器缓存时要注意！</span>
+                    </li>
+                    <li class="flex items-start">
+                      <i class="fa fa-chain-broken text-red-500 mt-1 mr-2"></i>
+                      <span>音乐歌单焕新！哈基米歌单下线了，听不到哈基米哦南北绿豆了QAQ</span>
+                    </li>
+                    <li class="flex items-start">
+                      <i class="	fa fa-volume-up text-green-500 mt-1 mr-2"></i>
+                      <span>终于轮到 东方Project 的歌单了！</span>
+                    </li>
+                    <li class="flex items-start">
+                      <span>此情试问寄何处，华鸟风月，也依旧消长。静待云破吐月光，今生无悔幻想乡！</span>
+                    </li>
+                    <li class="flex items-start">
+                      <span>喜欢哈基米歌单的话，可以在网易云音乐听！哈基米网易云音乐歌单ID：12511958644</span>
+                    </li>
+                  </ul>
+                </div>
+                <div class="update-content hidden">
+                  <h4 class="text-lg font-bold mb-3">V1.1.3.beta 更新内容</h4>
+                  <ul class="space-y-2">
+                    <li class="flex items-start">
+                      <i class="fa fa-plus-circle text-green-500 mt-1 mr-2"></i>
+                      <span>新增哈基米音乐播放器！哈基米哦南北绿豆~阿西嘎那呀哈呀库~</span>
+                    </li>
+                  </ul>
+                </div>
+                <div class="update-content hidden">
+                  <h4 class="text-lg font-bold mb-3">V1.1.2.beta 更新内容（V1.2.0.HDBCNAL更新内容）</h4>
+                  <ul class="space-y-2">
+                    <li class="flex items-start">
+                      <i class="fa fa-plus-circle text-green-500 mt-1 mr-2"></i>
+                      <span>新增更新公告！更快看到最新更新内容！移动端网页的更新公告在折叠菜单栏里面</span>
+                    </li>
+                    <li class="flex items-start">
+                      <i class="fa fa-plus-circle text-green-500 mt-1 mr-2"></i>
+                      <span>新增分享链接！这次分享按钮终于有用了……吗？快去看看吧！</span>
+                    </li>
+                    <li class="flex items-start">
+                      <i class="fa fa-plus-circle text-green-500 mt-1 mr-2"></i>
+                      <span>新增2个彩蛋，现已有4个彩蛋！等你来发现！</span>
+                    </li>
+                    <li class="flex items-start">
+                      <i class="fa fa-plus-circle text-green-500 mt-1 mr-2"></i>
+                      <span>新增网站运行时间，可以查看已运行时间！</span>
+                    </li>
+                    <li class="flex items-start">
+                      <i class="fa fa-wrench text-green-500 mt-1 mr-2"></i>
+                      <span>优化了资源卡片的加载速度</span>
+                    </li>
+                    <li class="flex items-start">
+                      <i class="fa fa-bug text-red-500 mt-1 mr-2"></i>
+                      <span>修复了收藏功能偶尔失效的问题</span>
+                    </li>
+                    <li class="flex items-start">
+                      <i class="fa fa-exclamation-triangle text-yellow-500 mt-1 mr-2"></i>
+                      <span>暂时不清楚浏览器缓存删除后还会不会保留收藏记录，大概率不会保留</span>
+                    </li>
+                  </ul>
+                </div>
+                <div class="update-content hidden">
+                  <h4 class="text-lg font-bold mb-3">V1.0.1.beta 更新内容（V1.1.0.HDBCNAL更新内容）</h4>
+                  <ul class="space-y-2">
+                    <li class="flex items-start">
+                      <i class="fa fa-plus-circle text-green-500 mt-1 mr-2"></i>
+                      <span>新增特殊彩蛋跳转警告，麻麻再也不用担心我用校园网看学习网站啦！</span>	
+                    </li>
+                    <li class="flex items-start">
+                      <i class="fa fa-podcast text-green-500 mt-1 mr-2"></i>
+                      <span>现已有2个彩蛋！</span>
+                    </li>
+                    <li class="flex items-start">
+                      <i class="fa fa-plus-circle text-green-500 mt-1 mr-2"></i>
+                      <span>新增滚动公告……你也看到了对吧！</span>	
+                    </li>
+                    <li class="flex items-start">
+                      <i class="fa fa-wrench text-green-500 mt-1 mr-2"></i>
+                      <span>优化：”加载更多资源“按钮更抽象了！快看看有什么新的变化吧！</span>
+                    </li>
+                    <li class="flex items-start">
+                      <i class="fa fa-bug text-red-500 mt-1 mr-2"></i>
+                      <span>修复：网页重构！修复对应的beta版本无法正常使用的问题</span>
+                    </li>
+                    <li class="flex items-start">
+                      <i class="fa fa-bug text-red-500 mt-1 mr-2"></i>
+                      <span>修复无法自动关闭部分弹窗的问题</span>
+                    </li>
+                    <li class="flex items-start">
+                      <i class="fa fa-plus-circle text-green-500 mt-1 mr-2"></i>
+                      <span>新增版本号，可以找 阿离Alize 反馈问题，联系方式你们都有！</span>	
+                    </li>
+                    <li class="flex items-start">
+                      <i class="fa fa-plus-circle text-green-500 mt-1 mr-2"></i>
+                      <span>新增beta版本，是新的链接，有需要可以联系 阿离Alize 获取beta版测试资格！抢先一步体验新功能！小鹿姐姐快人一步！（doge）</span>	
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+            
+            <!-- 弹窗底部 -->
+            <div class="mt-6 border-t pt-4">
+              <button class="close-modal-btn w-full bg-primary hover:bg-primary/90 text-white py-2 rounded-lg transition-all font-medium">
+                关闭
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 新增弹窗居中样式 -->
+        <style>
+          /* 确保弹窗背景使用flex布局居中 */
+          #update-notice-modal {
+            display: none;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+          }
+          
+          /* 弹窗动画效果 */
+          .modal-animation {
+            animation: modalSlideIn 0.3s ease-out forwards;
+          }
+          
+          @keyframes modalSlideIn {
+            from {
+              opacity: 0;
+              transform: translateY(-50px);
+            }
+            to {
+              opacity: 1;
+              transform: translateY(0);
+            }
+          }
+          
+          /* 列表项样式优化 */
+          .update-item.active {
+            background-color: rgba(22, 93, 255, 0.05);
+          }
+          
+          .update-item:hover {
+            transition: background-color 0.2s ease;
+          }
+          
+          /* 滚动条样式 */
+          #update-notice-modal .overflow-y-auto {
+            scrollbar-width: thin;
+          }
+          
+          #update-notice-modal .overflow-y-auto::-webkit-scrollbar {
+            width: 6px;
+          }
+
+          
+          
+          #update-notice-modal .overflow-y-auto::-webkit-scrollbar-thumb {
+            background-color: rgba(0, 0, 0, 0.1);
+            border-radius: 3px;
+          }
+        </style>
+
+        <!-- 搜索框 - 中等屏幕以上显示 -->
+        <div class="hidden md:flex relative flex-1 max-w-md mx-8">
+          <input 
+            id="search-input"
+            type="text" 
+            placeholder="搜索资源名称...例如：Ciallo～(∠・ω< )⌒☆" 
+            class="w-full pl-10 pr-4 py-2 rounded-full border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all bg-white/20"
+          >
+          <i class="fa fa-search absolute left-4 top-1/2 -translate-y-1/2 text-black"></i>
+        </div>
+        
+        <!-- 导航菜单 -->
+        <nav class="hidden md:flex items-center space-x-6">
+          <a href="#all" class="text-gray-700 hover:text-primary font-medium transition-colors">
+            <i class="fa fa-th-large mr-2"></i>全部</a>
+          <a href="#courses" class="text-gray-700 hover:text-primary font-medium transition-colors">
+            <i class="fa fa-book mr-2"></i>课程</a>
+          <a href="#tools" class="text-gray-700 hover:text-primary font-medium transition-colors">
+            <i class="fa fa-cogs mr-2"></i>工具</a>
+          <a href="#favorites" class="text-gray-700 hover:text-primary font-medium transition-colors">
+            <i class="fa-regular fa-star"></i> 收藏
+          </a>
+          <button class="mdui-textfield-close mdui-btn mdui-btn-icon mdui-ripple" id="toggle-tx" mdui-tooltip="{content: &#39;樱花落叶显示&#39;}">
+            <i class="mdui-icon material-icons">filter_vintage</i>
+          </button>
+          <button class="mdui-textfield-close mdui-btn mdui-btn-icon mdui-ripple" id="toggle-bg" mdui-tooltip="{content: '动态背景显示'}">
+            <i class="mdui-icon material-icons">wallpaper</i>
+          </button>
+          <button class="share-btn bg-primary/70 hover:bg-primary/90 text-white px-4 py-2 rounded-full transition-all shadow-md hover:shadow-lg flex items-center space-x-1">
+            <i class="fa fa-share-alt"></i>
+            <!-- <span>分享</span> -->
+          </button>
+        </nav>
+
+
+        <!-- 移动端按钮组 -->
+        <div class="flex items-center space-x-2">
+        <!-- 新增樱花落叶按钮 -->
+        <button class="md:hidden mdui-textfield-close mdui-btn mdui-btn-icon mdui-ripple" id="toggle-tx-mobile" mdui-tooltip="{content: '樱花落叶显示'}">
+          <i class="mdui-icon material-icons">filter_vintage</i>
+        </button>
+        <!-- 新增动态背景按钮 -->
+        <button class="md:hidden mdui-textfield-close mdui-btn mdui-btn-icon mdui-ripple" id="toggle-bg-mobile" mdui-tooltip="{content: '动态背景显示'}">
+          <i class="mdui-icon material-icons">wallpaper</i>
+        </button>
+
+        <!-- 原有移动端菜单按钮 -->
+        <button id="mobile-menu-button" class="md:hidden text-gray-700 hover:text-primary">
+          <i class="fa fa-bars text-xl"></i>
+        </button>
+        </div>
+      </div>
+    </div>
+    
+    <!-- 移动端搜索框 -->
+    <div class="md:hidden px-4 pb-4">
+      <div class="relative">
+        <input 
+          id="mobile-search-input"
+          type="text" 
+          placeholder="搜索资源名称...例如：Ciallo～(∠・ω< )⌒☆" 
+          class="w-full pl-10 pr-4 py-2 rounded-full border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all"
+          style="background-color: rgba(255, 255, 255, 0.2) !important;"
+        >
+        <i class="fa fa-search absolute left-4 top-1/2 -translate-y-1/2 text-black"></i>
+      </div>
+    </div>
+    
+    <!-- 移动端菜单 -->
+    <div id="mobile-menu" class="md:hidden hidden bg-white border-t border-gray-100 bg-white/20">
+      <div class="px-4 py-3 space-y-3">
+        <a href="#all" class="block text-gray-700 hover:text-primary font-medium py-2 transition-colors"
+           style="text-align: center !important;">
+           <i class="fa fa-th-large mr-2"></i>全部资源</a>
+        <a href="#courses" class="block text-gray-700 hover:text-primary font-medium py-2 transition-colors"
+           style="text-align: center !important;">
+           <i class="fa fa-book mr-2"></i>课程资源</a>
+        <a href="#tools" class="block text-gray-700 hover:text-primary font-medium py-2 transition-colors"
+           style="text-align: center !important;">
+           <i class="fa fa-cogs mr-2"></i>工具软件</a>
+        <a href="#favorites" class="block text-gray-700 hover:text-primary font-medium py-2 transition-colors"
+           style="text-align: center !important;">
+          <i class="fa-regular fa-star mr-1"></i> 我的收藏
+        </a>
+        <a href="#" id="mobile-update-notice-btn" class="block text-gray-700 hover:text-primary font-medium py-2 transition-colors"
+           style="text-align: center !important;">
+          <i class="fa fa-bullhorn mr-1"></i> 更新公告
+        </a>
+
+        <button class="share-btn w-full bg-primary/70 hover:bg-primary/90 text-white px-4 py-2 rounded-full transition-all shadow-md hover:shadow-lg flex items-center justify-center space-x-1">
+          <i class="fa fa-share-alt"></i>
+          <span>分享资源库</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+<!--  <div class="netease-mini-player"-->
+<!--     data-playlist-id="434256234"-->
+<!--     data-embed="false"-->
+<!--     data-position="bottom-right"-->
+<!--     data-lyric="true"-->
+<!--     data-theme="auto"-->
+<!--     data-default-minimized="true"-->
+<!--  ></div>-->
+
+
+  <!-- 主内容区 -->
+  <main class="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- 英雄区域 -->
+    <section class="mb-12 text-center">
+      <h1 class="text-[clamp(2rem,5vw,3rem)] font-bold mb-4 text-shadow">
+        优质学习资源整合平台
+      </h1>
+      <p class="text-gray-600 text-lg max-w-2xl mx-auto mb-8">
+        汇聚Python数据分析、机器学习、计算机视觉等领域的精选资源，助力高效学习与技能提升
+      </p>
+      <div class="flex flex-wrap justify-center gap-4">
+        <a href="#all" class="bg-primary/70 hover:bg-primary/90 text-white px-6 py-3 rounded-full transition-all shadow-md hover:shadow-lg flex items-center space-x-2">
+          <i class="fa fa-th-large"></i>
+          <span>浏览全部资源</span>
+        </a>
+        <a href="#categories" class="bg-white/70 hover:bg-white/90 text-primary border border-primary px-6 py-3 rounded-full transition-all shadow-sm hover:shadow flex items-center space-x-2">
+          <i class="fa fa-list"></i>
+          <span>按分类查看</span>
+        </a>
+      </div>
+    </section>
+    
+    <!-- 资源分类标签 -->
+    <section id="categories" class="mb-10">
+      <div class="flex overflow-x-auto pb-4 scrollbar-hide gap-3">
+        <button class="category-btn active whitespace-nowrap bg-primary/70 hover:bg-primary/90 text-white px-5 py-2 rounded-full text-sm font-medium shadow-md">
+          全部资源
+        </button>
+        <button class="category-btn whitespace-nowrap bg-white/70 hover:bg-gray-50/90 text-gray-700 px-5 py-2 rounded-full text-sm font-medium shadow-sm transition-all" data-category="course">
+          课程教程
+        </button>
+        <button class="category-btn whitespace-nowrap bg-white/70 hover:bg-gray-50/90 text-gray-700 px-5 py-2 rounded-full text-sm font-medium shadow-sm transition-all" data-category="tool">
+          工具软件
+        </button>
+        <button class="category-btn whitespace-nowrap bg-white/70 hover:bg-gray-50/90 text-gray-700 px-5 py-2 rounded-full text-sm font-medium shadow-sm transition-all" data-category="python">
+          Python相关
+        </button>
+        <button class="category-btn whitespace-nowrap bg-white/70 hover:bg-gray-50/90 text-gray-700 px-5 py-2 rounded-full text-sm font-medium shadow-sm transition-all" data-category="ai">
+          人工智能
+        </button>
+        <a href="{% url 'zylj' %}" target="_self" class="whitespace-nowrap bg-white/70 hover:bg-gray-50/90 text-gray-700 px-5 py-2 rounded-full text-sm font-medium shadow-sm transition-all">
+          <i class="fa fa-chain"></i>
+          <span>更多资源链接</span>
+        </a>
+      </div>
+    </section>
+    
+    <!-- 资源列表 -->
+    <section id="all" class="mb-16">
+      <h2 class="text-2xl font-bold mb-6 flex items-center">
+        <i class="fa fa-th-large text-primary mr-2"></i>
+        全部资源
+      </h2>
+      
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 resource-grid">
+        <!-- 资源卡片1：亓振莲python数据分析 -->
+        <div class="resource-card bg-white rounded-xl shadow-card hover:shadow-card-hover card-transition p-6" data-categories="course python" data-id="1">
+          <div class="flex items-start justify-between mb-4">
+            <div class="bg-primary/10 text-primary p-2 rounded-lg">
+              <i class="fa fa-code text-xl"></i>
+            </div>
+            <div class="flex items-center">
+              <span class="bg-blue-100/70 hover:bg-blue-100/90 text-primary text-xs px-2 py-1 rounded-full mr-2">Python</span>
+              <button class="favorite-btn text-gray-400 hover:text-gray-600" data-id="1">
+                <i class="fa-regular fa-star"></i>
+              </button>
+            </div>
+          </div>
+          <h3 class="text-lg font-semibold mb-2 line-clamp-2">亓振莲python数据分析</h3>
+          <p class="text-gray-500 text-sm mb-4 line-clamp-2">
+            专业的Python数据分析学习资源，适合入门到进阶的学习者
+          </p>
+          <div class="flex flex-col space-y-3">
+            <div class="relative">
+              <input type="text" value="https://wwp.lanzoul.com/b0pn60x3g" readonly class="w-full bg-gray-50/60 hover:bg-gray-50/90 rounded-lg px-3 py-2 text-sm border border-gray-200 focus:outline-none focus:ring-1 focus:ring-primary">
+              <button class="copy-btn absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-primary" data-target="https://wwp.lanzoul.com/b0pn60x3g">
+                <i class="fa fa-copy"></i>
+              </button>
+            </div>
+            <div class="flex items-center justify-between bg-gray-50/60 hover:bg-gray-50/90 rounded-lg px-3 py-2 border border-gray-200">
+              <span class="text-sm text-gray-600">提取密码:</span>
+              <div class="flex items-center">
+                <span class="password-text text-sm font-medium mr-2">Alizemina</span>
+                <button class="copy-btn text-gray-400 hover:text-primary" data-target="Alizemina">
+                  <i class="fa fa-copy"></i>
+                </button>
+              </div>
+            </div>
+            <a href="https://wwp.lanzoul.com/b0pn60x3g" target="_blank" rel="noopener noreferrer" class="w-full bg-primary/70 hover:bg-primary/90 text-white text-center py-2 rounded-lg transition-all font-medium text-sm">
+              立即访问 <i class="fa fa-external-link ml-1"></i>
+            </a>
+          </div>
+        </div>
+        
+        <!-- 资源卡片2：郭庆文机器学习数据挖掘与分析 -->
+        <div class="resource-card bg-white rounded-xl shadow-card hover:shadow-card-hover card-transition p-6" data-categories="course ai" data-id="2">
+          <div class="flex items-start justify-between mb-4">
+            <div class="bg-accent/10 text-accent p-2 rounded-lg">
+              <i class="fa fa-area-chart text-xl"></i>
+            </div>
+            <div class="flex items-center">
+              <span class="bg-purple-100/70 hover:bg-purple-100/90 text-accent text-xs px-2 py-1 rounded-full mr-2">机器学习</span>
+              <button class="favorite-btn text-gray-400 hover:text-gray-600" data-id="2">
+                <i class="fa-regular fa-star"></i>
+              </button>
+            </div>
+          </div>
+          <h3 class="text-lg font-semibold mb-2 line-clamp-2">郭庆文机器学习数据挖掘与分析</h3>
+          <p class="text-gray-500 text-sm mb-4 line-clamp-2">
+            全面的机器学习与数据挖掘教程，涵盖核心算法与实战案例
+          </p>
+          <div class="flex flex-col space-y-3">
+            <div class="relative">
+              <input type="text" value="https://wwp.lanzoul.com/b0pn60xad" readonly class="w-full bg-gray-50/60 hover:bg-gray-50/90 rounded-lg px-3 py-2 text-sm border border-gray-200 focus:outline-none focus:ring-1 focus:ring-primary">
+              <button class="copy-btn absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-primary" data-target="https://wwp.lanzoul.com/b0pn60xad">
+                <i class="fa fa-copy"></i>
+              </button>
+            </div>
+            <div class="flex items-center justify-between bg-gray-50/60 hover:bg-gray-50/90 rounded-lg px-3 py-2 border border-gray-200">
+              <span class="text-sm text-gray-600">提取密码:</span>
+              <div class="flex items-center">
+                <span class="password-text text-sm font-medium mr-2">Alizemina</span>
+                <button class="copy-btn text-gray-400 hover:text-primary" data-target="Alizemina">
+                  <i class="fa fa-copy"></i>
+                </button>
+              </div>
+            </div>
+            <a href="https://wwp.lanzoul.com/b0pn60xad" target="_blank" rel="noopener noreferrer" class="w-full bg-accent/70 hover:bg-accent/90 text-white text-center py-2 rounded-lg transition-all font-medium text-sm">
+              立即访问 <i class="fa fa-external-link ml-1"></i>
+            </a>
+          </div>
+        </div>
+        
+        <!-- 资源卡片3：陈超——定位巡航 -->
+        <div class="resource-card bg-white rounded-xl shadow-card hover:shadow-card-hover card-transition p-6" data-categories="course ai" data-id="3">
+          <div class="flex items-start justify-between mb-4">
+            <div class="bg-secondary/10 text-secondary p-2 rounded-lg">
+              <i class="fa fa-location-arrow text-xl"></i>
+            </div>
+            <div class="flex items-center">
+              <span class="bg-teal-100/70 hover:bg-teal-100/90 text-secondary text-xs px-2 py-1 rounded-full mr-2">定位巡航</span>
+              <button class="favorite-btn text-gray-400 hover:text-gray-600" data-id="3">
+                <i class="fa-regular fa-star"></i>
+              </button>
+            </div>
+          </div>
+          <h3 class="text-lg font-semibold mb-2 line-clamp-2">陈超——定位巡航</h3>
+          <p class="text-gray-500 text-sm mb-4 line-clamp-2">
+            定位巡航技术详解，包含原理分析与实际应用案例
+          </p>
+          <div class="flex flex-col space-y-3">
+            <div class="relative">
+              <input type="text" value="https://wwp.lanzoul.com/b0pn60xha" readonly class="w-full bg-gray-50/60 hover:bg-gray-50/90 rounded-lg px-3 py-2 text-sm border border-gray-200 focus:outline-none focus:ring-1 focus:ring-primary">
+              <button class="copy-btn absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-primary" data-target="https://wwp.lanzoul.com/b0pn60xha">
+                <i class="fa fa-copy"></i>
+              </button>
+            </div>
+            <div class="flex items-center justify-between bg-gray-50/60 hover:bg-gray-50/90 rounded-lg px-3 py-2 border border-gray-200">
+              <span class="text-sm text-gray-600">提取密码:</span>
+              <div class="flex items-center">
+                <span class="password-text text-sm font-medium mr-2">Alizemina</span>
+                <button class="copy-btn text-gray-400 hover:text-primary" data-target="Alizemina">
+                  <i class="fa fa-copy"></i>
+                </button>
+              </div>
+            </div>
+            <a href="https://wwp.lanzoul.com/b0pn60xha" target="_blank" rel="noopener noreferrer" class="w-full bg-secondary/70 hover:bg-secondary/90 text-white text-center py-2 rounded-lg transition-all font-medium text-sm">
+              立即访问 <i class="fa fa-external-link ml-1"></i>
+            </a>
+          </div>
+        </div>
+        
+        <!-- 资源卡片4：陈超——计算机视觉 -->
+        <div class="resource-card bg-white rounded-xl shadow-card hover:shadow-card-hover card-transition p-6" data-categories="course ai" data-id="4">
+          <div class="flex items-start justify-between mb-4">
+            <div class="bg-orange-500/10 text-orange-500 p-2 rounded-lg">
+              <i class="fa fa-eye text-xl"></i>
+            </div>
+            <div class="flex items-center">
+              <span class="bg-orange-100/70 hover:bg-orange-100/90 text-orange-500 text-xs px-2 py-1 rounded-full mr-2">计算机视觉</span>
+              <button class="favorite-btn text-gray-400 hover:text-gray-600" data-id="4">
+                <i class="fa-regular fa-star"></i>
+              </button>
+            </div>
+          </div>
+          <h3 class="text-lg font-semibold mb-2 line-clamp-2">陈超——计算机视觉</h3>
+          <p class="text-gray-500 text-sm mb-4 line-clamp-2">
+            计算机视觉核心技术与应用，从基础到高级的系统学习资源
+          </p>
+          <div class="flex flex-col space-y-3">
+            <div class="relative">
+              <input type="text" value="https://wwp.lanzoul.com/b0pn60xqj" readonly class="w-full bg-gray-50/60 hover:bg-gray-50/90 rounded-lg px-3 py-2 text-sm border border-gray-200 focus:outline-none focus:ring-1 focus:ring-primary">
+              <button class="copy-btn absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-primary" data-target="https://wwp.lanzoul.com/b0pn60xqj">
+                <i class="fa fa-copy"></i>
+              </button>
+            </div>
+            <div class="flex items-center justify-between bg-gray-50/60 hover:bg-gray-50/90 rounded-lg px-3 py-2 border border-gray-200">
+              <span class="text-sm text-gray-600">提取密码:</span>
+              <div class="flex items-center">
+                <span class="password-text text-sm font-medium mr-2">Alizemina</span>
+                <button class="copy-btn text-gray-400 hover:text-primary" data-target="Alizemina">
+                  <i class="fa fa-copy"></i>
+                </button>
+              </div>
+            </div>
+            <a href="https://wwp.lanzoul.com/b0pn60xqj" target="_blank" rel="noopener noreferrer" class="w-full bg-orange-500/70 hover:bg-orange-600 text-white text-center py-2 rounded-lg transition-all font-medium text-sm">
+              立即访问 <i class="fa fa-external-link ml-1"></i>
+            </a>
+          </div>
+        </div>
+        
+        <!-- 资源卡片5：工具（杂） -->
+        <div class="resource-card bg-white rounded-xl shadow-card hover:shadow-card-hover card-transition p-6" data-categories="tool" data-id="5">
+          <div class="flex items-start justify-between mb-4">
+            <div class="bg-gray-700/10 text-gray-700 p-2 rounded-lg">
+              <i class="fa fa-wrench text-xl"></i>
+            </div>
+            <div class="flex items-center">
+              <span class="bg-gray-100/70 hover:bg-gray-100/90 text-gray-700 text-xs px-2 py-1 rounded-full mr-2">工具集</span>
+              <button class="favorite-btn text-gray-400 hover:text-gray-600" data-id="5">
+                <i class="fa-regular fa-star"></i>
+              </button>
+            </div>
+          </div>
+          <h3 class="text-lg font-semibold mb-2 line-clamp-2">工具（杂）</h3>
+          <p class="text-gray-500 text-sm mb-4 line-clamp-2">
+            各类实用工具集合，满足学习和工作中的多样化需求
+          </p>
+          <div class="flex flex-col space-y-3">
+            <div class="relative">
+              <input type="text" value="https://wwp.lanzoul.com/b0pn60xud" readonly class="w-full bg-gray-50/60 hover:bg-gray-50/90 rounded-lg px-3 py-2 text-sm border border-gray-200 focus:outline-none focus:ring-1 focus:ring-primary">
+              <button class="copy-btn absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-primary" data-target="https://wwp.lanzoul.com/b0pn60xud">
+                <i class="fa fa-copy"></i>
+              </button>
+            </div>
+            <div class="flex items-center justify-between bg-gray-50/60 hover:bg-gray-50/90 rounded-lg px-3 py-2 border border-gray-200">
+              <span class="text-sm text-gray-600">提取密码:</span>
+              <div class="flex items-center">
+                <span class="password-text text-sm font-medium mr-2">Alizemina</span>
+                <button class="copy-btn text-gray-400 hover:text-primary" data-target="Alizemina">
+                  <i class="fa fa-copy"></i>
+                </button>
+              </div>
+            </div>
+            <a href="https://wwp.lanzoul.com/b0pn60xud" target="_blank" rel="noopener noreferrer" class="w-full bg-gray-700/70 hover:bg-gray-800 text-white text-center py-2 rounded-lg transition-all font-medium text-sm">
+              立即访问 <i class="fa fa-external-link ml-1"></i>
+            </a>
+          </div>
+        </div>
+        
+        <!-- 资源卡片6：软件安装包 -->
+        <div class="resource-card bg-white rounded-xl shadow-card hover:shadow-card-hover card-transition p-6" data-categories="tool" data-id="6">
+          <div class="flex items-start justify-between mb-4">
+            <div class="bg-green-500/10 text-green-500 p-2 rounded-lg">
+              <i class="fa fa-download text-xl"></i>
+            </div>
+            <div class="flex items-center">
+              <span class="bg-green-100/70 hover:bg-green-100/90 text-green-500 text-xs px-2 py-1 rounded-full mr-2">安装包</span>
+              <button class="favorite-btn text-gray-400 hover:text-gray-600" data-id="6">
+                <i class="fa-regular fa-star"></i>
+              </button>
+            </div>
+          </div>
+          <h3 class="text-lg font-semibold mb-2 line-clamp-2">软件安装包</h3>
+          <p class="text-gray-500 text-sm mb-4 line-clamp-2">
+            各类常用软件安装包，包含开发工具、设计软件等
+          </p>
+          <div class="flex flex-col space-y-3">
+            <div class="relative">
+              <input type="text" value="https://wwp.lanzoul.com/b0pn60y7g" readonly class="w-full bg-gray-50/60 hover:bg-gray-50/90 rounded-lg px-3 py-2 text-sm border border-gray-200 focus:outline-none focus:ring-1 focus:ring-primary">
+              <button class="copy-btn absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-primary" data-target="https://wwp.lanzoul.com/b0pn60y7g">
+                <i class="fa fa-copy"></i>
+              </button>
+            </div>
+            <div class="flex items-center justify-between bg-gray-50/60 hover:bg-gray-50/90 rounded-lg px-3 py-2 border border-gray-200">
+              <span class="text-sm text-gray-600">提取密码:</span>
+              <div class="flex items-center">
+                <span class="password-text text-sm font-medium mr-2">Alizemina</span>
+                <button class="copy-btn text-gray-400 hover:text-primary" data-target="Alizemina">
+                  <i class="fa fa-copy"></i>
+                </button>
+              </div>
+            </div>
+            <a href="https://wwp.lanzoul.com/b0pn60y7g" target="_blank" rel="noopener noreferrer" class="w-full bg-green-500/70 hover:bg-green-600 text-white text-center py-2 rounded-lg transition-all font-medium text-sm">
+              立即访问 <i class="fa fa-external-link ml-1"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+      
+      <!-- 加载更多按钮 -->
+      <div class="mt-10 text-center">
+        <button id="load-more" class="load-more-btn bg-white/70 hover:bg-gray-50/90 text-primary border border-primary px-6 py-3 rounded-full transition-all shadow-sm hover:shadow flex items-center justify-center mx-auto space-x-2">
+          <span>加载更多资源</span>
+          <i class="fa fa-refresh"></i>
+        </button>
+      </div>
+    </section>
+    
+    <!-- 分类资源区 -->
+    <section id="courses" class="mb-16">
+      <h2 class="text-2xl font-bold mb-6 flex items-center">
+        <i class="fa fa-book text-primary mr-2"></i>
+        课程资源
+      </h2>
+      
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 resource-grid">
+        <!-- 仅显示课程类资源，通过JS动态筛选 -->
+      </div>
+    </section>
+    
+    <section id="tools" class="mb-16">
+      <h2 class="text-2xl font-bold mb-6 flex items-center">
+        <i class="fa fa-cogs text-primary mr-2"></i>
+        工具软件
+      </h2>
+      
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 resource-grid">
+        <!-- 仅显示工具类资源，通过JS动态筛选 -->
+      </div>
+    </section>
+    
+    <!-- 我的收藏区域 -->
+    <section id="favorites" class="mb-16">
+      <h2 class="text-2xl font-bold mb-6 flex items-center">
+        <i class="fa-solid fa-star text-primary mr-2"></i>
+        我的收藏
+      </h2>
+      
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 favorite-grid">
+        <!-- 收藏的资源将通过JS动态显示在这里 -->
+        <div class="col-span-full text-center py-12 text-gray-500">
+          <i class="fa-regular fa-star text-4xl mb-4 opacity-30"></i>
+          <p>您还没有收藏任何资源，点击资源卡片上的星星图标进行收藏</p>
+        </div>
+      </div>
+    </section>
+    
+    <!-- 提示区域 -->
+    <section class="bg-primary/30 border border-primary/20 rounded-2xl p-6 mb-12">
+      <div class="flex flex-col md:flex-row items-start md:items-center">
+        <div class="bg-primary/30 text-primary p-3 rounded-full mb-4 md:mb-0 md:mr-4">
+          <i class="fa fa-info-circle text-xl"></i>
+        </div>
+        <div>
+          <h3 class="text-lg font-semibold mb-2 text-white">使用提示</h3>
+          <ul class="text-white space-y-1 text-sm">
+            <li class="flex items-start">
+              <i class="fa fa-check-circle text-primary mt-1 mr-2"></i>
+              <span>所有资源均来自蓝奏云，点击"立即访问"可直接跳转下载</span>
+            </li>
+            <li class="flex items-start">
+              <i class="fa fa-check-circle text-primary mt-1 mr-2"></i>
+              <span>提取密码统一为 <strong>Alizemina</strong>，可点击复制按钮快速复制</span>
+            </li>
+            <li class="flex items-start">
+              <i class="fa fa-check-circle text-primary mt-1 mr-2"></i>
+              <span>建议使用浏览器下载工具，确保下载速度和稳定性，蓝奏云下载无毒不限速</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- 页脚 -->
+  <footer class="bg-white/10 backdrop-blur-sm shadow-sm border-t border-gray-200 py-8">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex flex-col md:flex-row justify-between items-center">
+        <div class="flex items-center space-x-2">
+          <!-- 使用img标签加载指定图片作为Logo -->
+          <i class="fa fa-graduation-cap text-primary text-2xl"></i>
+          <span class="text-xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+            学习资源库
+            <span class="text-sm text-gray-500 italic">by阿离Alize</span>
+          </span>
+        </div>
+        
+        <div class="flex space-x-6 mb-4 md:mb-0">
+          <a href="#" class="social-btn text-gray-500 hover:text-primary transition-colors" data-type="github">
+            <i class="fab fa-github text-xl"></i>
+          </a>
+          <a href="#" class="social-btn text-gray-500 hover:text-primary transition-colors" data-type="weixin">
+            <i class="fab fa-weixin text-xl"></i>
+          </a>
+          <a href="#" class="social-btn text-gray-500 hover:text-primary transition-colors" data-type="envelope">
+            <i class="fa fa-envelope text-xl"></i>
+          </a>
+        </div>
+
+
+
+    <!--网站背景-->
+    <!-- <script src="./0721_Galgame🥰简洁美丽的Gal资源站_files/hm.js.下载"></script><script>
+        // 背景状态管理
+        document.addEventListener('DOMContentLoaded', function() {
+          const togglebg = document.getElementById('toggle-bg');
+          const backgroundDiv = document.getElementById('dynamic-background');
+          
+          // 获取存储的状态（默认开启）
+          const bgEnabled = localStorage.getItem('bgEffect') !== 'false';
+          
+          // 设置按钮状态
+          if (!bgEnabled) {
+            togglebg.classList.remove('mdui-color-blue-grey');
+            togglebg.classList.add('mdui-color-grey');
+          }
+          
+          // 更新状态
+          if (bgEnabled) {
+            const iframe = document.createElement('iframe');
+            iframe.src = 'https://api.r10086.com/PPT/PPT.php?PPT=缘之空';
+            iframe.style = 'border: 0; width: 100%; height: 100%;';
+            iframe.loading = 'eager';
+            backgroundDiv.appendChild(iframe);
+            console.log('开启背景显示');
+          } else {
+            backgroundDiv.style.display = 'none';
+            console.log('关闭背景显示');
+          }
+        
+          // 按钮点击事件
+          togglebg.addEventListener('click', function() {
+            const bgState = !bgEnabled;
+            localStorage.setItem('bgEffect', bgState);
+            location.reload(); // 刷新网页
+          });
+        });
+    </script> -->
+
+    <!-- 网站背景 -->
+<script>
+  // 桌面端和移动端的背景图片集合（分别设置不同的图片）
+  const desktopBackgrounds = [
+            "{% static 'diannao/wallhaven-72o2go.webp' %}",
+            "{% static 'diannao/wallhaven-4vq65n.webp' %}",
+            "{% static 'diannao/wallhaven-eow9vk.webp' %}",
+            "{% static 'diannao/wallhaven-vm7xp8.webp' %}",
+            "{% static 'diannao/wallhaven-956wdd.webp' %}",
+            "{% static 'diannao/wallhaven-mp21ok.webp' %}",
+            "{% static 'diannao/wallhaven-y89mwl.webp' %}",
+            "{% static 'diannao/wallhaven-47wvl9.webp' %}",
+            "{% static 'diannao/wallhaven-nmoox9.webp' %}",
+            "{% static 'diannao/wallhaven-vgdw7p.webp' %}",
+            "{% static 'diannao/wallhaven-49yzek.webp' %}",
+            "{% static 'diannao/88c178b57e8e0f5e5c2bdd8e2df426c5.webp' %}",
+            "{% static 'diannao/63fa3b19681d210cbba647c1171f7874.webp' %}",
+            "{% static 'diannao/5bc9437da759d49a746669969f981fe8.webp' %}",
+            "{% static 'diannao/c663a1c5369987b40518dbee406357d5.webp' %}",
+            "{% static 'diannao/b8b70058051a9536f743fb3501aebd05.webp' %}",
+            "{% static 'diannao/bg_0_coma.png' %}",
+            "{% static 'diannao/illust_75778903_20200206_165709.jpg' %}",
+            "{% static 'diannao/31112400eok8.webp' %}",
+            "{% static 'diannao/27157_1_d2.jpg' %}",
+            "{% static 'diannao/wp14514683.webp' %}",
+            "{% static 'diannao/R-C.jpg'}",
+            "{% static 'diannao/R-C (1).jpg' %}",
+            "{% static 'diannao/2563059592_1664902638.jpg' %}",
+            "{% static 'diannao/d610b1102a5ec6f632cdb19f80663158_8952848721543698387.jpg' %}",
+            "{% static 'diannao/img149.webp' %}",
+
+  ];
+  
+  const mobileBackgrounds = [
+    "{% static 'shouji/wallhaven-e77878.webp' %}",
+    "{% static 'shouji/wallhaven-d59zqm.webp' %}",
+    "{% static 'shouji/wallhaven-g7x12q.webp' %}",
+    "{% static 'shouji/wallhaven-w8vzjq.webp' %}",
+    "{% static 'shouji/wallhaven-13kwog.webp' %}",
+    "{% static 'shouji/illust_77340151_20200206_170829.jpg' %}",
+    "{% static 'shouji/79519821_p0.jpg' %}",
+    "{% static 'shouji/79389478_p0.jpg' %}",
+    "{% static 'shouji/78909963_p0.jpg' %}",
+    "{% static 'shouji/79620287_p0.jpg' %}",
+    "{% static 'shouji/79519023_p0.png' %}",
+    "{% static 'shouji/79593713_p0.jpg' %}",
+    "{% static 'shouji/20200803075651_pubjh.jpg' %}",
+    "{% static 'shouji/Atri_My_Dear_Moments-cover.jpg' %}",
+    "{% static 'shouji/20220603100527_07645.jpg' %}",
+    
+  ];
+  
+  // 获取背景元素
+  const backgroundElement = document.getElementById('dynamic-background');
+  let currentIndex = 0;
+  let backgrounds = [];
+  let slideInterval;
+  
+  // 初始化背景轮播
+  function initBackgroundSlider() {
+    // 根据屏幕宽度选择对应的图片集合
+    if (window.innerWidth < 768) { // 移动端阈值
+      backgrounds = mobileBackgrounds;
+    } else { // 桌面端
+      backgrounds = desktopBackgrounds;
+    }
+    
+    // 设置初始背景
+    setBackground(0);
+    
+    // 启动轮播
+    startSlideInterval();
+  }
+  
+  // 设置背景图片
+  function setBackground(index) {
+    backgroundElement.style.backgroundImage = `url(${backgrounds[index]})`;
+    backgroundElement.style.backgroundSize = 'cover';
+    backgroundElement.style.backgroundPosition = 'center';
+    backgroundElement.style.transition = 'background-image 1s ease-in-out';
+    currentIndex = index;
+  }
+
+  // 启动轮播定时器
+function startSlideInterval() {
+  // 清除现有定时器
+  if (slideInterval) clearInterval(slideInterval);
+  
+  // 每5秒切换一次背景（改为随机切换）
+  slideInterval = setInterval(() => {
+    // 生成随机索引（避免与当前索引重复）
+    let nextIndex;
+    // 如果只有一张图片，直接使用0
+    if (backgrounds.length === 1) {
+      nextIndex = 0;
+    } else {
+      // 循环生成直到与当前索引不同
+      do {
+        nextIndex = Math.floor(Math.random() * backgrounds.length);
+      } while (nextIndex === currentIndex);
+    }
+    setBackground(nextIndex);
+  }, 5000);
+}
+  
+  // 监听窗口大小变化，动态切换图片集合
+  window.addEventListener('resize', () => {
+    const isMobile = window.innerWidth < 768;
+    const wasMobile = backgrounds === mobileBackgrounds;
+    
+    // 只有当设备类型发生变化时才重新初始化
+    if (isMobile !== wasMobile) {
+      initBackgroundSlider();
+    }
+  });
+  
+  // 页面加载完成后初始化
+  window.addEventListener('load', initBackgroundSlider);
+</script>   
+
+   <!--网站樱花-->
+   <script>
+   // 樱花状态管理
+   document.addEventListener('DOMContentLoaded', function() {
+     const toggleyh = document.getElementById('toggle-tx');
+     const mobileToggle = document.getElementById('toggle-tx-mobile'); // 新增移动端按钮
+
+     // 获取存储的状态（默认关闭）
+     const yhEnabled = localStorage.getItem('yhEffect') === 'true';
+
+     // 设置按钮状态
+     if (!yhEnabled) {
+       toggleyh.classList.remove('mdui-color-blue-grey');
+       toggleyh.classList.add('mdui-color-grey');
+
+       // 同步设置移动端按钮状态
+       if (mobileToggle) {
+         mobileToggle.classList.remove('mdui-color-blue-grey');
+         mobileToggle.classList.add('mdui-color-grey');
+       }
+     }
+
+     // 更新状态
+     if (yhEnabled) {
+       const script = document.createElement('script');
+       script.src = "{% static 'usr/themes/cuckoo/assets/js/Blossom.js' %}";//樱花落叶效果
+       document.body.appendChild(script);
+       console.log('开启樱花落叶');
+     } else {
+       console.log('关闭樱花落叶');
+     }
+
+     // 原按钮点击事件
+     toggleyh.addEventListener('click', function() {
+       const yhState = !yhEnabled;
+       localStorage.setItem('yhEffect', yhState);
+       location.reload(); // 刷新网页
+     });
+
+     // 新增移动端按钮点击事件
+     if (mobileToggle) {
+       mobileToggle.addEventListener('click', function() {
+         const yhState = !yhEnabled;
+         localStorage.setItem('yhEffect', yhState);
+         location.reload(); // 刷新网页
+       });
+     }
+   });
+   </script>
+   <!--运行时间-->
+   本站已经运行了 : <span id="span_dt_dt" style="color: #2F889A"></span>
+   <script>
+       function show_date_time(){
+       window.setTimeout("show_date_time()", 1000);
+       BirthDay=new Date("11/13/2025 13:03:19");
+       today=new Date();
+       timeold=(today.getTime()-BirthDay.getTime());
+       sectimeold=timeold/1000
+       secondsold=Math.floor(sectimeold);
+       msPerDay=24*60*60*1000
+       e_daysold=timeold/msPerDay
+       daysold=Math.floor(e_daysold);
+       e_hrsold=(e_daysold-daysold)*24;
+       hrsold=Math.floor(e_hrsold);
+       e_minsold=(e_hrsold-hrsold)*60;
+       minsold=Math.floor((e_hrsold-hrsold)*60);
+       seconds=Math.floor((e_minsold-minsold)*60);
+       span_dt_dt.innerHTML='<font style="color:#FF00FF">'+daysold+'</font> 天 <font style="color:#FF00FF">'+hrsold+'</font> 时 <font style="color:#FF00FF">'+minsold+'</font> 分 <font style="color:#FF00FF">'+seconds+'</font> 秒';
+       }
+       show_date_time();
+   </script>
+          © 2026 学习资源整合平台V2.0.1.beta | 仅供学习交流使用 | by阿离Alize
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- 复制提示 -->
+  <div id="copy-toast" class="fixed bottom-6 right-6 bg-dark text-white px-4 py-2 rounded-lg shadow-lg opacity-0 z-50">
+    <i class="fa fa-check mr-2"></i> 复制成功！
+  </div>
+
+  <!-- 收藏提示 -->
+  <div id="favorite-toast" class="fixed bottom-6 right-6 bg-dark text-white px-4 py-2 rounded-lg shadow-lg opacity-0 z-50">
+    <i class="fa-solid fa-star mr-2"></i> 已添加到收藏！
+  </div>
+
+  <!-- 取消收藏提示 -->
+  <div id="unfavorite-toast" class="fixed bottom-6 right-6 bg-dark text-white px-4 py-2 rounded-lg shadow-lg opacity-0 z-50">
+    <i class="fa-regular fa-star mr-2"></i> 已从收藏中移除！
+  </div>
+
+  <!-- 分享弹窗 -->
+  <div id="share-modal" class="fixed inset-0 bg-black/50 modal-backdrop z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-xl p-6 max-w-md w-full modal-animation relative">
+      <div class="text-center mb-6">
+        <i class="fa fa-share-alt text-primary text-4xl mb-4"></i>
+        <p class="text-lg">Web地址栏里面有！自己复制！我懒得写！</p>
+      </div>
+      <button class="close-modal-btn w-full bg-primary hover:bg-primary/90 text-white py-2 rounded-lg transition-all font-medium">
+        关闭
+      </button>
+    </div>
+  </div>
+
+  <!-- GitHub弹窗 -->
+  <div id="github-modal" class="fixed inset-0 bg-black/50 modal-backdrop z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-xl p-6 max-w-md w-full modal-animation relative">
+      <div class="text-center mb-6">
+        <i class="fab fa-github text-primary text-4xl mb-4"></i>
+        <p class="text-lg">骗你的，这玩意根本没有上传到GitHub，也没办法连接GitHub（doge）</p>
+      </div>
+      <button class="close-modal-btn w-full bg-primary hover:bg-primary/90 text-white py-2 rounded-lg transition-all font-medium">
+        关闭
+      </button>
+    </div>
+  </div>
+
+  <!-- 微信弹窗 -->
+  <div id="weixin-modal" class="fixed inset-0 bg-black/50 modal-backdrop z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-xl p-6 max-w-md w-full modal-animation relative">
+      <div class="text-center mb-6">
+        <i class="fab fa-weixin text-primary text-4xl mb-4"></i>
+        <p class="text-lg">骗你的，这玩意根本没有微信登录（doge）</p>
+      </div>
+      <button class="close-modal-btn w-full bg-primary hover:bg-primary/90 text-white py-2 rounded-lg transition-all font-medium">
+        关闭
+      </button>
+    </div>
+  </div>
+
+  <!-- Envelope弹窗 -->
+  <div id="envelope-modal" class="fixed inset-0 bg-black/50 modal-backdrop z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-xl p-6 max-w-md w-full modal-animation relative">
+      <div class="text-center mb-6">
+        <i class="fa fa-envelope text-primary text-4xl mb-4"></i>
+        <p class="text-lg">骗你的，这玩意根本没有办法连接Envelope（doge）</p>
+      </div>
+      <button class="close-modal-btn w-full bg-primary hover:bg-primary/90 text-white py-2 rounded-lg transition-all font-medium">
+        关闭
+      </button>
+    </div>
+  </div>
+
+  <!-- 0721彩蛋提示弹窗 -->
+  <div id="彩蛋提示弹窗" class="fixed inset-0 bg-black/50 modal-backdrop z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-xl p-6 max-w-md w-full modal-animation relative">
+      <div class="text-center mb-6">
+        <i class="fa fa-exclamation-triangle text-yellow-500 text-4xl mb-4"></i>
+        <p class="text-lg">请确保在没有连接校园网时触发该彩蛋！</p>
+      </div>
+      <div class="flex gap-3">
+        <button id="取消打开" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-2 rounded-lg transition-all font-medium">
+          窝连了校园网，补药打开！
+        </button>
+        <button id="确认打开" class="flex-1 bg-primary hover:bg-primary/90 text-white py-2 rounded-lg transition-all font-medium">
+          诶嘿！窝补啪！✈
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- JavaScript -->
+  <script>
+    // 移动端菜单切换
+    const mobileMenuButton = document.getElementById('mobile-menu-button');
+    const mobileMenu = document.getElementById('mobile-menu');
+    
+    mobileMenuButton.addEventListener('click', () => {
+      mobileMenu.classList.toggle('hidden');
+    });
+    
+    // 复制功能
+    const copyButtons = document.querySelectorAll('.copy-btn');
+    const copyToast = document.getElementById('copy-toast');
+    
+    copyButtons.forEach(button => {
+      button.addEventListener('click', () => {
+        const targetText = button.getAttribute('data-target');
+        
+        // 复制到剪贴板
+        navigator.clipboard.writeText(targetText).then(() => {
+          // 显示提示
+          copyToast.classList.add('copy-toast');
+          
+          // 重置动画
+          setTimeout(() => {
+            copyToast.classList.remove('copy-toast');
+          }, 2000);
+        });
+      });
+    });
+    
+    // 分类筛选功能
+    const categoryButtons = document.querySelectorAll('.category-btn');
+    const resourceCards = document.querySelectorAll('.resource-card');
+    
+    categoryButtons.forEach(button => {
+      button.addEventListener('click', () => {
+        // 更新按钮样式
+        categoryButtons.forEach(btn => {
+          btn.classList.remove('active', 'bg-primary/70', 'hover:bg-primary/90', 'text-white', 'shadow-md');
+          btn.classList.add('bg-white/70', 'hover:bg-gray-50/90', 'text-gray-700', 'shadow-sm');
+        });
+        
+        button.classList.add('active', 'bg-primary/70', 'hover:bg-primary/90', 'text-white', 'shadow-md');  
+        button.classList.remove('bg-white/70', 'hover:bg-gray-50/90', 'text-gray-700', 'shadow-sm');  
+        
+        // 筛选资源
+        const category = button.getAttribute('data-category');
+        
+        resourceCards.forEach(card => {
+          if (!category || card.getAttribute('data-categories').includes(category)) {
+            card.style.display = 'block';
+          } else {
+            card.style.display = 'none';
+          }
+        });
+      });
+    });
+    
+    // --- 修复和优化的代码开始 ---
+
+    // 统一关闭模态框的函数
+    function closeAllModals() {
+        document.querySelectorAll('.modal-backdrop').forEach(modal => {
+            modal.classList.add('hidden');
+        });
+    }
+
+    // 为所有关闭按钮添加事件监听
+    document.querySelectorAll('.close-modal-btn').forEach(button => {
+        button.addEventListener('click', closeAllModals);
+    });
+    
+    // 搜索和彩蛋功能
+    const searchInputs = document.querySelectorAll('input[placeholder*="搜索资源名称"]');
+    const 彩蛋提示弹窗 = document.getElementById('彩蛋提示弹窗');
+    const 取消打开按钮 = document.getElementById('取消打开');
+    const 确认打开按钮 = document.getElementById('确认打开');
+
+    // 关闭彩蛋弹窗
+    function 关闭彩蛋弹窗() {
+      彩蛋提示弹窗.classList.add('hidden');
+    }
+
+    // 取消打开链接
+    取消打开按钮.addEventListener('click', () => {
+      searchInputs.forEach(input => {
+        input.value = ''; // 清空所有搜索框
+      });
+      关闭彩蛋弹窗();
+    });
+
+    // 为每个搜索框添加输入事件监听
+    searchInputs.forEach(input => {
+      input.addEventListener('input', (e) => {
+        const searchTerm = e.target.value.trim();
+        const lowerSearchTerm = searchTerm.toLowerCase();
+        
+        // 彩蛋1：输入"0721"显示提示弹窗
+        if (lowerSearchTerm === '0721') {
+          setTimeout(() => {
+            彩蛋提示弹窗.classList.remove('hidden');
+            // 动态绑定0721对应的链接
+            确认打开按钮.onclick = function() {
+              window.open('https://nn0721.icu', '_blank');
+              searchInputs.forEach(input => { input.value = ''; });
+              关闭彩蛋弹窗();
+            };
+          }, 100);
+        }
+        // --- 新增开始 ---
+        // 彩蛋3：输入"SYZX"或"神隐之乡"显示提示弹窗
+        else if (lowerSearchTerm === 'syzx' || searchTerm === '神隐之乡') {
+          setTimeout(() => {
+            彩蛋提示弹窗.classList.remove('hidden');
+            // 动态绑定新彩蛋对应的链接
+            确认打开按钮.onclick = function() {
+              window.open('https://acgsyzx.me/', '_blank');
+              searchInputs.forEach(input => { input.value = ''; });
+              关闭彩蛋弹窗();
+            };
+          }, 100);
+        }
+        //彩蛋4：输入"qingju"或"青桔"显示提示弹窗
+        else if (lowerSearchTerm === 'qingju' || searchTerm === '青桔') {
+          setTimeout(() => {
+            彩蛋提示弹窗.classList.remove('hidden');
+            // 动态绑定新彩蛋对应的链接
+            确认打开按钮.onclick = function() {
+              window.open('https://qingju.org/', '_blank');
+              searchInputs.forEach(input => { input.value = ''; });
+              关闭彩蛋弹窗();
+            };
+          }, 100);
+        }
+        
+        // 彩蛋2：输入"Ciallo"自动打开B站ciallo歌
+        if (lowerSearchTerm === 'ciallo') {
+          setTimeout(() => {
+            window.open('https://www.bilibili.com/video/BV1sK41137i5/?share_source=copy_web&vd_source=ac3caf1a4647dbd011e3ceca2706b20c&t=12', '_blank');
+            e.target.value = ''; // 只清空当前正在输入的搜索框
+          }, 300);
+        }
+        
+        // 常规搜索逻辑
+        resourceCards.forEach(card => {
+          const cardTitle = card.querySelector('h3').textContent.toLowerCase();
+          
+          if (cardTitle.includes(lowerSearchTerm)) {
+            card.style.display = 'block';
+          } else {
+            card.style.display = 'none';
+          }
+        });
+      });
+    });
+    
+    // 导航栏滚动效果
+    window.addEventListener('scroll', () => {
+      const header = document.querySelector('header');
+      
+      if (window.scrollY > 50) {
+        header.classList.add('shadow-md');
+        header.classList.remove('shadow-sm');
+      } else {
+        header.classList.remove('shadow-md');
+        header.classList.add('shadow-sm');
+      }
+    });
+    
+    // 平滑滚动
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        
+        const targetId = this.getAttribute('href');
+        const targetElement = document.querySelector(targetId);
+        
+        if (targetElement) {
+          // 关闭移动菜单（如果打开的话）
+          if (!mobileMenu.classList.contains('hidden')) {
+              mobileMenu.classList.add('hidden');
+          }
+          
+          window.scrollTo({
+            top: targetElement.offsetTop - 80, // 减去导航栏高度
+            behavior: 'smooth'
+          });
+        }
+      });
+    });
+
+    // 收藏功能
+    const favoriteButtons = document.querySelectorAll('.favorite-btn');
+    const favoriteToast = document.getElementById('favorite-toast');
+    const unfavoriteToast = document.getElementById('unfavorite-toast');
+    const favoriteGrid = document.querySelector('.favorite-grid');
+    
+    // 从本地存储加载收藏
+    let favorites = JSON.parse(localStorage.getItem('favorites')) || [];
+    
+    // 更新收藏按钮状态
+    function updateFavoriteButtons() {
+      favoriteButtons.forEach(button => {
+        const resourceId = button.getAttribute('data-id');
+        if (favorites.includes(resourceId)) {
+          button.classList.add('active');
+          button.innerHTML = '<i class="fa-solid fa-star"></i>';
+        } else {
+          button.classList.remove('active');
+          button.innerHTML = '<i class="fa-regular fa-star"></i>';
+        }
+      });
+      renderFavorites();
+    }
+    
+    // 渲染收藏列表
+    function renderFavorites() {
+      if (favorites.length === 0) {
+        favoriteGrid.innerHTML = `
+          <div class="col-span-full text-center py-12 text-gray-500">
+            <i class="fa-regular fa-star text-4xl mb-4 opacity-30"></i>
+            <p>您还没有收藏任何资源，点击资源卡片上的星星图标进行收藏</p>
+          </div>
+        `;
+        return;
+      }
+      
+      favoriteGrid.innerHTML = '';
+      resourceCards.forEach(card => {
+        const resourceId = card.getAttribute('data-id');
+        if (favorites.includes(resourceId)) {
+          const clone = card.cloneNode(true);
+          // 更新克隆卡片中的收藏按钮事件
+          const cloneBtn = clone.querySelector('.favorite-btn');
+          cloneBtn.addEventListener('click', handleFavoriteClick);
+          favoriteGrid.appendChild(clone);
+        }
+      });
+    }
+    
+    // 收藏按钮点击事件处理
+    function handleFavoriteClick(e) {
+      const button = e.currentTarget;
+      const resourceId = button.getAttribute('data-id');
+      
+      if (favorites.includes(resourceId)) {
+        // 取消收藏
+        favorites = favorites.filter(id => id !== resourceId);
+        unfavoriteToast.classList.add('copy-toast');
+        setTimeout(() => {
+          unfavoriteToast.classList.remove('copy-toast');
+        }, 2000);
+      } else {
+        // 添加收藏
+        favorites.push(resourceId);
+        favoriteToast.classList.add('copy-toast');
+        setTimeout(() => {
+          favoriteToast.classList.remove('copy-toast');
+        }, 2000);
+      }
+      
+      // 保存到本地存储并更新UI
+      localStorage.setItem('favorites', JSON.stringify(favorites));
+      updateFavoriteButtons();
+    }
+    
+    // 为所有收藏按钮添加点击事件
+    favoriteButtons.forEach(button => {
+      button.addEventListener('click', handleFavoriteClick);
+    });
+    
+    // 加载更多按钮功能
+    const loadMoreBtn = document.getElementById('load-more');
+    let isLoading = false;
+    let hasMore = true; // 模拟是否有更多数据
+    
+    loadMoreBtn.addEventListener('click', () => {
+      if (isLoading || !hasMore) return;
+      
+      isLoading = true;
+      loadMoreBtn.innerHTML = '<span>加载中...是不可能，你被骗了（doge）</span><i class="fa fa-spinner fa-spin"></i>';
+      loadMoreBtn.classList.add('loading');
+      
+      // 模拟加载延迟
+      setTimeout(() => {
+        if (Math.random() > 0.5) { // 模拟有时加载失败或没有更多数据
+          hasMore = false;
+          loadMoreBtn.innerHTML = '<span>哪有那么多资源给你啊！再给过不了审啦！</span>';
+          loadMoreBtn.classList.add('no-more');
+        } else {
+          // 这里是模拟加载更多，如果有真实的API，可以在这里发起请求
+          loadMoreBtn.innerHTML = '<span>加载更多资源</span><i class="fa fa-refresh"></i>';
+        }
+        
+        isLoading = false;
+        loadMoreBtn.classList.remove('loading');
+      }, 1500);
+    });
+
+    // 分享按钮功能
+    const shareBtn = document.querySelector('.share-btn');
+    const shareModal = document.getElementById('share-modal');
+    
+    shareBtn.addEventListener('click', () => {
+      shareModal.classList.remove('hidden'); // 显示分享弹窗
+      // 3秒后自动关闭当前弹窗
+      setTimeout(() => {
+        if (!shareModal.classList.contains('hidden')) { // 防止用户手动关闭后重复执行
+          shareModal.classList.add('hidden');
+        }
+      }, 3000);
+    });
+
+    // 社交按钮功能
+    const socialBtns = document.querySelectorAll('.social-btn');
+    
+    socialBtns.forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        const type = btn.getAttribute('data-type');
+        const modal = document.getElementById(`${type}-modal`);
+    
+        if (modal) {
+          modal.classList.remove('hidden'); // 显示对应弹窗（GitHub/微信/Envelope）
+          // 3秒后自动关闭当前弹窗
+          setTimeout(() => {
+            if (!modal.classList.contains('hidden')) { // 防止用户手动关闭后重复执行
+              modal.classList.add('hidden');
+            }
+          }, 3000);
+        }
+      });
+    });
+
+    // 页面加载时初始化收藏按钮状态
+    document.addEventListener('DOMContentLoaded', () => {
+      updateFavoriteButtons();
+      
+      // 初始化分类资源区（课程和工具）
+      const courseGrid = document.querySelector('#courses .resource-grid');
+      const toolGrid = document.querySelector('#tools .resource-grid');
+      
+      resourceCards.forEach(card => {
+          const categories = card.getAttribute('data-categories');
+          const clone = card.cloneNode(true);
+          // 更新克隆卡片中的收藏按钮事件
+          const cloneBtn = clone.querySelector('.favorite-btn');
+          cloneBtn.addEventListener('click', handleFavoriteClick);
+
+          if (categories.includes('course')) {
+              courseGrid.appendChild(clone);
+          }
+          if (categories.includes('tool')) {
+              toolGrid.appendChild(clone);
+          }
+      });
+    });
+    // --- 修复和优化的代码结束 ---
+  </script>
+  <script>
+    // 更新公告弹窗功能
+    const updateNoticeBtn = document.getElementById('update-notice-btn');
+    const mobileUpdateNoticeBtn = document.getElementById('mobile-update-notice-btn');
+    const updateNoticeModal = document.getElementById('update-notice-modal');
+    const closeModalBtns = document.querySelectorAll('.close-modal-btn');
+    const updateItems = document.querySelectorAll('.update-item');
+    const updateContents = document.querySelectorAll('.update-content');
+    
+    // 打开弹窗
+    function openUpdateModal() {
+      updateNoticeModal.style.display = 'flex';
+      document.body.style.overflow = 'hidden';
+    }
+    
+    // 关闭弹窗
+    function closeUpdateModal() {
+      updateNoticeModal.style.display = 'none';
+      document.body.style.overflow = '';
+    }
+    
+    // 绑定按钮事件
+    updateNoticeBtn.addEventListener('click', openUpdateModal);
+    if (mobileUpdateNoticeBtn) {
+      mobileUpdateNoticeBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        openUpdateModal();
+        // 关闭移动菜单（如果存在）
+        const mobileMenu = document.getElementById('mobile-menu');
+        if (mobileMenu) mobileMenu.classList.add('hidden');
+      });
+    }
+    
+    // 关闭按钮事件
+    closeModalBtns.forEach(btn => {
+      btn.addEventListener('click', closeUpdateModal);
+    });
+    
+    // 点击背景关闭弹窗
+    updateNoticeModal.addEventListener('click', (e) => {
+      if (e.target === updateNoticeModal) {
+        closeUpdateModal();
+      }
+    });
+    
+    // 切换更新内容
+    updateItems.forEach((item, index) => {
+      item.addEventListener('click', () => {
+        // 更新左侧列表样式
+        updateItems.forEach(i => i.classList.remove('active', 'border-l-4', 'border-primary'));
+        item.classList.add('active', 'border-l-4', 'border-primary');
+        
+        // 更新右侧内容
+        updateContents.forEach(content => content.classList.add('hidden'));
+        updateContents[index].classList.remove('hidden');
+      });
+    });
+
+    // 处理所有分享按钮的点击事件（包括移动端）
+    document.querySelectorAll('.share-btn').forEach(btn => {
+      btn.addEventListener('click', function() {
+        const shareToast = document.getElementById('share-modal');
+        // 显示弹窗
+        shareToast.classList.remove('hidden');
+        // 防止背景滚动
+        document.body.style.overflow = 'hidden';
+    
+        // 3秒后自动关闭弹窗
+        setTimeout(() => {
+          shareToast.classList.add('hidden');
+          // 恢复背景滚动
+          document.body.style.overflow = '';
+        }, 3000);
+      });
+    });
+
+  </script>
+  <!-- 音乐播放器 -->
+  <script src="{% static 'usr/themes/cuckoo/assets/js/xf-MusicPlayer.min.js' %}"></script>
+  <div id="xf-MusicPlayer"
+      data-cdnName="{% static 'usr/themes/cuckoo/assets/js' %}"
+      data-themeColor="xf-girlPink"
+      data-songList="434256234"
+      data-random="true">
+  </div>
+<!-- 放在页面底部，</body> 标签上方 -->
+<script>
+  // 等待页面所有元素加载完成
+  document.addEventListener('DOMContentLoaded', function() {
+    // 获取桌面端和移动端的背景按钮、动态背景元素
+    const toggleBgDesktop = document.getElementById('toggle-bg');
+    const toggleBgMobile = document.getElementById('toggle-bg-mobile');
+    const dynamicBackground = document.getElementById('dynamic-background');
+
+    // 确保元素存在（避免报错）
+    if (toggleBgDesktop && toggleBgMobile && dynamicBackground) {
+      // 定义切换背景的核心逻辑（复用桌面端已有的功能）
+      function toggleBackground() {
+        // 切换动态背景的显示/隐藏状态
+        const isVisible = dynamicBackground.style.display !== 'none';
+        dynamicBackground.style.display = isVisible ? 'none' : 'block';
+        
+        // 同步按钮图标（可选：点击后切换图标，更直观）
+        const desktopIcon = toggleBgDesktop.querySelector('i');
+        const mobileIcon = toggleBgMobile.querySelector('i');
+        if (desktopIcon && mobileIcon) {
+          const newIcon = isVisible ? 'wallpaper' : 'visibility_off';
+          desktopIcon.textContent = newIcon;
+          mobileIcon.textContent = newIcon;
+        }
+      }
+
+      // 给桌面端和移动端按钮绑定相同的点击事件
+      toggleBgDesktop.addEventListener('click', toggleBackground);
+      toggleBgMobile.addEventListener('click', toggleBackground);
+    }
+  });
+</script>
+<style>
+#search-input::placeholder {
+  color: #00000096 !important; /* 占位符纯黑色 */
+  opacity: 1 !important;  /* 确保占位符颜色不透明（部分浏览器默认半透） */
+}
+#mobile-search-input::placeholder {
+  color: #00000096 !important; /* 占位符纯黑色 */
+  opacity: 1 !important;  /* 确保占位符颜色不透明（部分浏览器默认半透） */
+}
+</style>
+</body>
+</html>
+<!--哈基米音乐歌单12511958644-->
