@@ -1,12 +1,11 @@
 <!DOCTYPE html>
-{% load static %}
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>感谢打赏 | 支持我的创作</title>
-    <link rel="stylesheet" href="{% static 'mdui-v1.0.2/css/mdui.min.css' %}">
-    <script src="{% static 'mdui-v1.0.2/js/mdui.min.js' %}"></script>
+    <link rel="stylesheet" href="mdui-v1.0.2/css/mdui.min.css">
+    <script src="mdui-v1.0.2/js/mdui.min.js"></script>
     <style>
         /* 全局样式重置与基础配置 */
         * {
@@ -336,56 +335,56 @@
 
     <!-- ========== 引入外部脚本 ========== -->
     <!-- QRCode.js（生成二维码） -->
-    <script src="{% static 'qrcodejs-master/qrcode.min.js' %}"></script>
+    <script src="qrcodejs-master/qrcode.min.js"></script>
     
     <!-- ========== 动态背景轮播功能 ========== -->
     <script>
       // 桌面端和移动端的背景图片集合（分别设置不同的图片）
       const desktopBackgrounds = [
-            "{% static 'diannao/wallhaven-72o2go.webp' %}",
-            "{% static 'diannao/wallhaven-4vq65n.webp' %}",
-            "{% static 'diannao/wallhaven-eow9vk.webp' %}",
-            "{% static 'diannao/wallhaven-vm7xp8.webp' %}",
-            "{% static 'diannao/wallhaven-956wdd.webp' %}",
-            "{% static 'diannao/wallhaven-mp21ok.webp' %}",
-            "{% static 'diannao/wallhaven-y89mwl.webp' %}",
-            "{% static 'diannao/wallhaven-47wvl9.webp' %}",
-            "{% static 'diannao/wallhaven-nmoox9.webp' %}",
-            "{% static 'diannao/wallhaven-vgdw7p.webp' %}",
-            "{% static 'diannao/wallhaven-49yzek.webp' %}",
-            "{% static 'diannao/88c178b57e8e0f5e5c2bdd8e2df426c5.webp' %}",
-            "{% static 'diannao/63fa3b19681d210cbba647c1171f7874.webp' %}",
-            "{% static 'diannao/5bc9437da759d49a746669969f981fe8.webp' %}",
-            "{% static 'diannao/c663a1c5369987b40518dbee406357d5.webp' %}",
-            "{% static 'diannao/b8b70058051a9536f743fb3501aebd05.webp' %}",
-            "{% static 'diannao/bg_0_coma.png' %}",
-            "{% static 'diannao/illust_75778903_20200206_165709.jpg' %}",
-            "{% static 'diannao/31112400eok8.webp' %}",
-            "{% static 'diannao/27157_1_d2.jpg' %}",
-            "{% static 'diannao/wp14514683.webp' %}",
-            "{% static 'diannao/R-C.jpg'}",
-            "{% static 'diannao/R-C (1).jpg' %}",
-            "{% static 'diannao/2563059592_1664902638.jpg' %}",
-            "{% static 'diannao/d610b1102a5ec6f632cdb19f80663158_8952848721543698387.jpg' %}",
-            "{% static 'diannao/img149.webp' %}",
+            "diannao/wallhaven-72o2go.webp",
+            "diannao/wallhaven-4vq65n.webp",
+            "diannao/wallhaven-eow9vk.webp",
+            "diannao/wallhaven-vm7xp8.webp",
+            "diannao/wallhaven-956wdd.webp",
+            "diannao/wallhaven-mp21ok.webp",
+            "diannao/wallhaven-y89mwl.webp",
+            "diannao/wallhaven-47wvl9.webp",
+            "diannao/wallhaven-nmoox9.webp",
+            "diannao/wallhaven-vgdw7p.webp",
+            "diannao/wallhaven-49yzek.webp",
+            "diannao/88c178b57e8e0f5e5c2bdd8e2df426c5.webp",
+            "diannao/63fa3b19681d210cbba647c1171f7874.webp",
+            "diannao/5bc9437da759d49a746669969f981fe8.webp",
+            "diannao/c663a1c5369987b40518dbee406357d5.webp",
+            "diannao/b8b70058051a9536f743fb3501aebd05.webp",
+            "diannao/bg_0_coma.png",
+            "diannao/illust_75778903_20200206_165709.jpg",
+            "diannao/31112400eok8.webp",
+            "diannao/27157_1_d2.jpg",
+            "diannao/wp14514683.webp",
+            "diannao/R-C.jpg'}",
+            "diannao/R-C (1).jpg",
+            "diannao/2563059592_1664902638.jpg",
+            "diannao/d610b1102a5ec6f632cdb19f80663158_8952848721543698387.jpg",
+            "diannao/img149.webp",
       ];
       
       const mobileBackgrounds = [
-            "{% static 'shouji/wallhaven-e77878.webp' %}",
-            "{% static 'shouji/wallhaven-d59zqm.webp' %}",
-            "{% static 'shouji/wallhaven-g7x12q.webp' %}",
-            "{% static 'shouji/wallhaven-w8vzjq.webp' %}",
-            "{% static 'shouji/wallhaven-13kwog.webp' %}",
-            "{% static 'shouji/illust_77340151_20200206_170829.jpg' %}",
-            "{% static 'shouji/79519821_p0.jpg' %}",
-            "{% static 'shouji/79389478_p0.jpg' %}",
-            "{% static 'shouji/78909963_p0.jpg' %}",
-            "{% static 'shouji/79620287_p0.jpg' %}",
-            "{% static 'shouji/79519023_p0.png' %}",
-            "{% static 'shouji/79593713_p0.jpg' %}",
-            "{% static 'shouji/20200803075651_pubjh.jpg' %}",
-            "{% static 'shouji/Atri_My_Dear_Moments-cover.jpg' %}",
-            "{% static 'shouji/20220603100527_07645.jpg' %}",
+            "shouji/wallhaven-e77878.webp",
+            "shouji/wallhaven-d59zqm.webp",
+            "shouji/wallhaven-g7x12q.webp",
+            "shouji/wallhaven-w8vzjq.webp",
+            "shouji/wallhaven-13kwog.webp",
+            "shouji/illust_77340151_20200206_170829.jpg",
+            "shouji/79519821_p0.jpg",
+            "shouji/79389478_p0.jpg",
+            "shouji/78909963_p0.jpg",
+            "shouji/79620287_p0.jpg",
+            "shouji/79519023_p0.png",
+            "shouji/79593713_p0.jpg",
+            "shouji/20200803075651_pubjh.jpg",
+            "shouji/Atri_My_Dear_Moments-cover.jpg",
+            "shouji/20220603100527_07645.jpg",
       ];
       
       // 获取背景元素
@@ -628,7 +627,8 @@
         });
     </script>
     <!--音乐播放{，原歌单“3001795926”-->
-    <script src="{% static 'usr/themes/cuckoo/assets/js/xf-MusicPlayer.min.js' %}"></script>
-    <div id="xf-MusicPlayer" data-cdnName="{% static 'usr/themes/cuckoo/assets/js' %}"  data-themeColor="xf-girlPink" data-songList="434256234" data-random="true"></div>
+    <script src="usr/themes/cuckoo/assets/js/xf-MusicPlayer.min.js"></script>
+    <div id="xf-MusicPlayer" data-cdnName="usr/themes/cuckoo/assets/js"  data-themeColor="xf-girlPink" data-songList="434256234" data-random="true"></div>
 </body>
+
 </html>
