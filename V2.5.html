@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>感谢打赏 | 支持我的创作</title>
+    <link rel="stylesheet" href="mdui-v1.0.2/css/mdui.min.css">
+    <script src="mdui-v1.0.2/js/mdui.min.js"></script>
+    <style>
+        /* 全局样式重置与基础配置 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
+        }
+
+        /* ========== 动态背景核心样式 ========== */
+        #dynamic-background {
+            position: fixed; /* 背景铺满整个页面，固定不滚动 */
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: -1; /* 背景置于最底层 */
+            filter: brightness(0.8); /* 降低背景亮度，保证文字可读性 */
+            background-color: #f5f5f5; /* 背景关闭时的默认色 */
+        }
+
+        /* 背景关闭样式 */
+        #dynamic-background.bg-disabled {
+            background-image: none !important;
+        }
+
+        /* 打赏内容容器：在背景上层，半透明背景提升可读性 */
+        .reward-page {
+            position: relative;
+            z-index: 1;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px 0;
+        }
+
+        /* ========== 打赏卡片样式（保留原有样式并优化） ========== */
+        .reward-container {
+            max-width: 600px;
+            width: 90%;
+            margin: 0 auto;
+        }
+
+        .reward-header {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #fff; /* 文字改为白色，适配深色背景 */
+            text-shadow: 0 0 5px rgba(0,0,0,0.5); /* 加文字阴影，提升辨识度 */
+        }
+
+        /* ====== 新增：运行时间样式 ====== */
+        .runtime-box {
+            font-size: 16px;
+            margin-bottom: 15px; /* 和下方标题保持间距 */
+            text-align: center; /* 强制居中，双重保障 */
+            text-shadow: 0 0 3px rgba(0,0,0,0.8); /* 提升动态背景下的可读性 */
+        }
+
+        /* 关键修改：可点击标题样式 */
+        .clickable-title {
+            font-size: 24px;
+            margin-bottom: 10px;
+            cursor: pointer; /* 鼠标指针变为手型 */
+            transition: all 0.3s ease; /* 过渡动画 */
+            display: inline-block; /* 适配hover效果 */
+        }
+        .clickable-title:hover {
+            color: #16ffec; /*  hover时变色 */
+            transform: scale(1.85); /* 轻微放大 */
+        }
+
+        /* 新增：可点击提示文字样式 */
+        .clickable-tip {
+            font-size: 16px;
+            line-height: 1.5;
+            cursor: pointer; /* 手型指针，提示可点击 */
+            transition: color 0.3s ease; /* 颜色过渡动画 */
+            text-shadow: 0 0 3px rgba(0,0,0,0.8);
+        }
+        .clickable-tip:hover {
+            color: #ffd700; /* hover时变为金色 */
+        }
+
+        /* 关键修改：默认隐藏二维码区域，添加过渡动画 */
+        .qrcode-cards {
+            display: none; /* 默认隐藏 */
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+            animation: fadeIn 0.5s ease-in-out; /* 显示时淡入动画 */
+        }
+        /* 淡入动画 */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .qrcode-card {
+            background-color: rgba(255, 255, 255, 0.686); /* 卡片半透明白色背景 */
+            padding: 25px 20px;
+            border-radius: 12px;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.2);
+            width: 260px;
+            text-align: center;
+        }
+
+        .qrcode-card.wechat {
+            border-top: 4px solid #07c160;
+        }
+
+        .qrcode-card.alipay {
+            border-top: 4px solid #1677ff;
+        }
+
+        .qrcode-card h2 {
+            font-size: 18px;
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        .qrcode-card.wechat h2 {
+            color: #07c160;
+        }
+
+        .qrcode-card.alipay h2 {
+            color: #1677ff;
+        }
+
+        .qrcode-box {
+            width: 200px;
+            height: 200px;
+            margin: 0 auto;
+        }
+
+        .qrcode-table td {
+            width: 8px;
+            height: 8px;
+            padding: 0;
+            margin: 0;
+            border: 0;
+        }
+
+        .qrcode-dark {
+            background: #000;
+        }
+
+        .qrcode-light {
+            background: #fff;
+        }
+
+        /* ========== 新增：暗色模式二维码样式 ========== */
+        .dark-mode .qrcode-dark {
+            background: #fff;
+        }
+        .dark-mode .qrcode-light {
+            background: transparent;
+        }
+
+        .card-tip {
+            margin-top: 15px;
+            font-size: 14px;
+            color: #666;
+        }
+
+        /* ========== 右下角按钮容器核心样式 ========== */
+        .btn-group-fixed {
+            position: fixed; /* 固定定位 */
+            bottom: 20px;    /* 距离底部20px */
+            right: 20px;     /* 距离右侧20px */
+            display: flex;   /* 横向排列按钮 */
+            gap: 10px;       /* 按钮间距 */
+            z-index: 9999;   /* 置顶，不被遮挡 */
+        }
+
+        /* 按钮激活状态样式（区分开关状态） */
+        .mdui-btn.mdui-color-blue-grey {
+            background-color: #607d8b !important;
+            color: #fff !important;
+        }
+
+        /* 移动端适配：缩小间距和位置 */
+        @media (max-width: 768px) {
+            .btn-group-fixed {
+                bottom: 15px;
+                right: 15px;
+                gap: 8px;
+            }
+            /* ====== 新增：移动端运行时间适配 ====== */
+            .runtime-box {
+                font-size: 14px;
+            }
+            .clickable-title {
+                font-size: 20px; /* 移动端标题缩小 */
+            }
+            .clickable-tip {
+                font-size: 14px; /* 移动端提示文字缩小 */
+            }
+        }
+
+        /* 移除弹窗相关样式（已删除弹窗，无需保留） */
+    </style>
+</head>
+<body>
+    <!-- 动态背景容器（底层） -->
+    <div id="dynamic-background"></div>
+
+    <!-- 打赏内容容器（上层） -->
+    <div class="reward-page">
+        <div class="reward-container">
+            <!-- 页面标题 -->
+            <div class="reward-header">
+                <!-- ====== 新增：运行时间HTML结构 ====== -->
+                <div class="runtime-box">
+                    本站已经运行了 : <span id="span_dt_dt" style="color: #ffffff"></span>
+                </div>
+                <!-- 关键修改：将标题改为可点击元素，添加id -->
+                <div class="clickable-title" id="toggle-reward">感谢您的支持 🥰</div>
+                <!-- 新增：给提示文字添加id和可点击样式类 -->
+                <p id="toggle-hide-qrcode" class="clickable-tip">点击上方文字查看打赏二维码！Ciallo～(∠・ω< )⌒★</p>
+            </div>
+
+            <!-- 二维码卡片区域（添加id用于控制显示/隐藏） -->
+            <div class="qrcode-cards" id="reward-qrcodes">
+                <!-- 微信打赏二维码 -->
+                <div class="qrcode-card wechat">
+                    <h2>微信打赏</h2>
+                    <div class="qrcode-box" id="wechat-qrcode"></div>
+                    <p class="card-tip">扫码后可任意金额打赏</p>
+                </div>
+
+                <!-- 支付宝打赏二维码 -->
+                <div class="qrcode-card alipay">
+                    <h2>支付宝打赏</h2>
+                    <div class="qrcode-box" id="alipay-qrcode"></div>
+                    <p class="card-tip">扫码后可任意金额打赏</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== 右下角MDUI按钮容器 ========== -->
+    <div class="btn-group-fixed">
+        <button class="mdui-textfield-close mdui-btn mdui-btn-icon mdui-ripple" id="toggle-tx" mdui-tooltip="{content: &#39;樱花落叶&#39;}">
+            <i class="mdui-icon material-icons">filter_vintage</i>
+        </button>
+    </div>
+
+    <!-- ========== 引入外部脚本 ========== -->
+    <!-- QRCode.js（生成二维码） -->
+    <script src="qrcodejs-master/qrcode.min.js"></script>
+    
+    <!-- ========== 动态背景轮播功能 ========== -->
+    <script>
+      // 桌面端和移动端的背景图片集合（分别设置不同的图片）
+      const desktopBackgrounds = [
+            "diannao/wallhaven-72o2go.webp",
+            "diannao/wallhaven-4vq65n.webp",
+            "diannao/wallhaven-eow9vk.webp",
+            "diannao/wallhaven-vm7xp8.webp",
+            "diannao/wallhaven-956wdd.webp",
+            "diannao/wallhaven-mp21ok.webp",
+            "diannao/wallhaven-y89mwl.webp",
+            "diannao/wallhaven-47wvl9.webp",
+            "diannao/wallhaven-nmoox9.webp",
+            "diannao/wallhaven-vgdw7p.webp",
+            "diannao/wallhaven-49yzek.webp",
+            "diannao/88c178b57e8e0f5e5c2bdd8e2df426c5.webp",
+            "diannao/63fa3b19681d210cbba647c1171f7874.webp",
+            "diannao/5bc9437da759d49a746669969f981fe8.webp",
+            "diannao/c663a1c5369987b40518dbee406357d5.webp",
+            "diannao/b8b70058051a9536f743fb3501aebd05.webp",
+            "diannao/bg_0_coma.png",
+            "diannao/illust_75778903_20200206_165709.jpg",
+            "diannao/31112400eok8.webp",
+            "diannao/27157_1_d2.jpg",
+            "diannao/wp14514683.webp",
+            "diannao/R-C.jpg'}",
+            "diannao/R-C (1).jpg",
+            "diannao/2563059592_1664902638.jpg",
+            "diannao/d610b1102a5ec6f632cdb19f80663158_8952848721543698387.jpg",
+            "diannao/img149.webp",
+      ];
+      
+      const mobileBackgrounds = [
+            "shouji/wallhaven-e77878.webp",
+            "shouji/wallhaven-d59zqm.webp",
+            "shouji/wallhaven-g7x12q.webp",
+            "shouji/wallhaven-w8vzjq.webp",
+            "shouji/wallhaven-13kwog.webp",
+            "shouji/illust_77340151_20200206_170829.jpg",
+            "shouji/79519821_p0.jpg",
+            "shouji/79389478_p0.jpg",
+            "shouji/78909963_p0.jpg",
+            "shouji/79620287_p0.jpg",
+            "shouji/79519023_p0.png",
+            "shouji/79593713_p0.jpg",
+            "shouji/20200803075651_pubjh.jpg",
+            "shouji/Atri_My_Dear_Moments-cover.jpg",
+            "shouji/20220603100527_07645.jpg",
+      ];
+      
+      // 获取背景元素
+      const backgroundElement = document.getElementById('dynamic-background');
+      let currentIndex = 0;
+      let backgrounds = [];
+      let slideInterval;
+      
+      // 初始化背景轮播
+      function initBackgroundSlider() {
+        // 根据屏幕宽度选择对应的图片集合
+        if (window.innerWidth < 768) { // 移动端阈值
+          backgrounds = mobileBackgrounds;
+        } else { // 桌面端
+          backgrounds = desktopBackgrounds;
+        }
+        
+        // 设置初始背景
+        setBackground(0);
+        
+        // 启动轮播
+        startSlideInterval();
+        
+        // ========== 新增：检测背景亮度并设置暗色模式 ==========
+        checkBackgroundBrightness();
+      }
+      
+      // 设置背景图片
+      function setBackground(index) {
+        backgroundElement.style.backgroundImage = `url(${backgrounds[index]})`;
+        backgroundElement.style.backgroundSize = 'cover';
+        backgroundElement.style.backgroundPosition = 'center';
+        backgroundElement.style.transition = 'background-image 1s ease-in-out';
+        currentIndex = index;
+        
+        // ========== 新增：每次切换背景都检测亮度 ==========
+        checkBackgroundBrightness();
+      }
+
+      // ========== 新增：检测背景亮度并添加/移除暗色模式类 ==========
+      function checkBackgroundBrightness() {
+        const qrcodeCards = document.getElementById('reward-qrcodes');
+        // 简单判断：根据背景元素的亮度或直接判断背景图片是否为暗色
+        // 这里提供两种方案，你可以根据实际情况选择：
+        
+        // 方案1：通过计算背景图片的平均亮度（需要图片加载完成）
+        // 方案2：简单判断（推荐）- 根据经验判断背景是否为暗色
+        // 这里使用方案2，你可以根据自己的背景图片调整判断逻辑
+        const isDarkBackground = true; // 默认为暗色模式，你可以根据实际情况修改
+        // 或者更智能的判断：
+        // const computedStyle = window.getComputedStyle(backgroundElement);
+        // const bgColor = computedStyle.backgroundColor;
+        // const isDarkBackground = bgColor && bgColor !== 'rgb(245, 245, 245)';
+        
+        if (isDarkBackground) {
+          qrcodeCards.classList.add('dark-mode');
+        } else {
+          qrcodeCards.classList.remove('dark-mode');
+        }
+      }
+
+      // 启动轮播定时器
+      function startSlideInterval() {
+        // 清除现有定时器
+        if (slideInterval) clearInterval(slideInterval);
+        
+        // 每5秒切换一次背景（改为随机切换）
+        slideInterval = setInterval(() => {
+          // 生成随机索引（避免与当前索引重复）
+          let nextIndex;
+          // 如果只有一张图片，直接使用0
+          if (backgrounds.length === 1) {
+            nextIndex = 0;
+          } else {
+            // 循环生成直到与当前索引不同
+            do {
+              nextIndex = Math.floor(Math.random() * backgrounds.length);
+            } while (nextIndex === currentIndex);
+          }
+          setBackground(nextIndex);
+        }, 5000);
+      }
+      
+      // 监听窗口大小变化，动态切换图片集合
+      window.addEventListener('resize', () => {
+        const isMobile = window.innerWidth < 768;
+        const wasMobile = backgrounds === mobileBackgrounds;
+        
+        // 只有当设备类型发生变化时才重新初始化
+        if (isMobile !== wasMobile) {
+          initBackgroundSlider();
+        }
+      });
+      
+      // 页面加载完成后初始化
+      window.addEventListener('load', initBackgroundSlider);
+    </script>
+
+   <!--网站樱花-->
+   <script>
+   // 樱花状态管理
+   document.addEventListener('DOMContentLoaded', function() {
+     const toggleyh = document.getElementById('toggle-tx');
+     const mobileToggle = document.getElementById('toggle-tx-mobile'); // 新增移动端按钮
+
+     // 获取存储的状态（默认关闭）
+     const yhEnabled = localStorage.getItem('yhEffect') === 'true';
+
+     // 设置按钮状态
+     if (!yhEnabled) {
+       toggleyh.classList.remove('mdui-color-blue-grey');
+       toggleyh.classList.add('mdui-color-grey');
+
+       // 同步设置移动端按钮状态
+       if (mobileToggle) {
+         mobileToggle.classList.remove('mdui-color-blue-grey');
+         mobileToggle.classList.add('mdui-color-grey');
+       }
+     }
+
+     // 更新状态
+     if (yhEnabled) {
+       const script = document.createElement('script');
+       script.src = 'usr/themes/cuckoo/assets/js/Blossom.js';//樱花落叶效果
+       document.body.appendChild(script);
+       console.log('开启樱花落叶');
+     } else {
+       console.log('关闭樱花落叶');
+     }
+
+     // 原按钮点击事件
+     toggleyh.addEventListener('click', function() {
+       const yhState = !yhEnabled;
+       localStorage.setItem('yhEffect', yhState);
+       location.reload(); // 刷新网页
+     });
+
+     // 新增移动端按钮点击事件
+     if (mobileToggle) {
+       mobileToggle.addEventListener('click', function() {
+         const yhState = !yhEnabled;
+         localStorage.setItem('yhEffect', yhState);
+         location.reload(); // 刷新网页
+       });
+     }
+   });
+   </script>
+
+    <!-- ========== 二维码初始化 ========== -->
+    <script>
+        // 初始化二维码的通用函数
+        function initQRCode(containerId, text) {
+            new QRCode(document.getElementById(containerId), {
+                text: text,
+                width: 200,
+                height: 200,
+                render: 'table',
+                colorDark: '#000000',
+                colorLight: '#ffffff00',
+                correctLevel: QRCode.CorrectLevel.H
+            });
+        }
+
+        // 替换为你自己的收款码内容
+        const wechatRewardText = 'wxp://f2f0o1DE58fDnQdh5HcF4_1NWPIkEemxGAx15pd0mjRBwEc'; // 微信收款码
+        const alipayRewardText = 'https://qr.alipay.com/fkx147326l1wqflmscsup73'; // 支付宝收款码
+
+        // 初始化两个二维码
+        initQRCode('wechat-qrcode', wechatRewardText);
+        initQRCode('alipay-qrcode', alipayRewardText);
+    </script>
+
+    <!-- ====== 新增：运行时间JS代码 ====== -->
+    <script>
+        function show_date_time(){
+            window.setTimeout("show_date_time()", 1000);
+            BirthDay=new Date("1/16/2026 17:24:00"); // 可替换为你的建站时间
+            today=new Date();
+            timeold=(today.getTime()-BirthDay.getTime());
+            sectimeold=timeold/1000
+            secondsold=Math.floor(sectimeold);
+            msPerDay=24*60*60*1000
+            e_daysold=timeold/msPerDay
+            daysold=Math.floor(e_daysold);
+            e_hrsold=(e_daysold-daysold)*24;
+            hrsold=Math.floor(e_hrsold);
+            e_minsold=(e_hrsold-hrsold)*60;
+            minsold=Math.floor((e_hrsold-hrsold)*60);
+            seconds=Math.floor((e_minsold-minsold)*60);
+            document.getElementById('span_dt_dt').innerHTML = daysold+' 天 '+hrsold+' 时 '+minsold+' 分 '+seconds+' 秒';
+        }
+
+        // DOM加载完成后启动运行时间计算
+        document.addEventListener('DOMContentLoaded', function() {
+            show_date_time();
+        });
+    </script>
+
+    <!-- ========== 修改：二维码显示/隐藏逻辑 ========== -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 获取元素
+            const toggleBtn = document.getElementById('toggle-reward');
+            const qrcodeArea = document.getElementById('reward-qrcodes');
+            const hideQrcodeTip = document.getElementById('toggle-hide-qrcode');
+
+            // 保存原始文字内容
+            const originalTitleText = toggleBtn.innerHTML;
+            const originalTipText = hideQrcodeTip.innerHTML;
+
+            // 点击标题直接显示二维码
+            toggleBtn.addEventListener('click', function() {
+                if (qrcodeArea.style.display !== 'flex') {
+                    qrcodeArea.style.display = 'flex';
+                    hideQrcodeTip.innerHTML = '点击此处收起二维码 ✨';
+                    // ========== 新增：显示二维码时重新检测背景亮度 ==========
+                    checkBackgroundBrightness();
+                }
+            });
+
+            // 点击提示文字收起二维码
+            hideQrcodeTip.addEventListener('click', function() {
+                if (qrcodeArea.style.display === 'flex') {
+                    qrcodeArea.style.display = 'none';
+                    hideQrcodeTip.innerHTML = originalTipText;
+                    toggleBtn.innerHTML = originalTitleText;
+                }
+            });
+        });
+    </script>
+    <!--音乐播放{，原歌单“3001795926”-->
+    <script src="usr/themes/cuckoo/assets/js/xf-MusicPlayer.min.js"></script>
+    <div id="xf-MusicPlayer" data-cdnName="usr/themes/cuckoo/assets/js"  data-themeColor="xf-girlPink" data-songList="434256234" data-random="true"></div>
+</body>
+
+</html>
