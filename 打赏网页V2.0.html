@@ -199,80 +199,7 @@
             }
         }
 
-        /* ========== 新增：弹窗样式 ========== */
-        .modal-mask {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background: rgba(0, 0, 0, 0.7);
-            z-index: 99999;
-            display: none;
-            justify-content: center;
-            align-items: center;
-        }
-        .modal-container {
-            background: #fff;
-            border-radius: 12px;
-            padding: 30px;
-            width: 90%;
-            max-width: 400px;
-            text-align: center;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
-        }
-        .modal-title {
-            font-size: 16px;
-            color: #333;
-            margin-bottom: 20px;
-            line-height: 1.5;
-        }
-        .modal-input {
-            width: 100%;
-            padding: 10px 15px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            font-size: 18px;
-            text-align: center;
-            margin-bottom: 15px;
-            outline: none;
-        }
-        .modal-input:focus {
-            border-color: #1677ff;
-        }
-        .modal-btn-group {
-            display: flex;
-            gap: 10px;
-            justify-content: center;
-        }
-        .modal-btn {
-            padding: 8px 20px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 14px;
-            transition: all 0.2s ease;
-        }
-        .modal-confirm {
-            background: #1677ff;
-            color: #fff;
-        }
-        .modal-confirm:hover {
-            background: #0e66e2;
-        }
-        .modal-close {
-            background: #999;
-            color: #fff;
-        }
-        .modal-close:hover {
-            background: #777;
-        }
-        .error-tip {
-            color: #f53f3f;
-            font-size: 14px;
-            margin-top: 10px;
-            display: none;
-        }
+        /* 移除弹窗相关样式（已删除弹窗，无需保留） */
     </style>
 </head>
 <body>
@@ -291,7 +218,7 @@
                 <!-- 关键修改：将标题改为可点击元素，添加id -->
                 <div class="clickable-title" id="toggle-reward">感谢您的支持 🥰</div>
                 <!-- 新增：给提示文字添加id和可点击样式类 -->
-                <p id="toggle-hide-qrcode" class="clickable-tip">点击上方文字有惊喜！Ciallo～(∠・ω< )⌒★</p>
+                <p id="toggle-hide-qrcode" class="clickable-tip">点击上方文字查看打赏二维码！Ciallo～(∠・ω< )⌒★</p>
             </div>
 
             <!-- 二维码卡片区域（添加id用于控制显示/隐藏） -->
@@ -318,19 +245,6 @@
         <button class="mdui-textfield-close mdui-btn mdui-btn-icon mdui-ripple" id="toggle-tx" mdui-tooltip="{content: &#39;樱花落叶&#39;}">
             <i class="mdui-icon material-icons">filter_vintage</i>
         </button>
-    </div>
-
-    <!-- ========== 新增：访问码弹窗 ========== -->
-    <div class="modal-mask" id="codeModal">
-        <div class="modal-container">
-            <div class="modal-title">还记得大佬分享给你的访问码吗，请输入哦~如果忘了那就悄悄提示你访问码是欧那尼~猜猜看吧！</div>
-            <input type="text" class="modal-input" id="accessCode" placeholder="请输入4位数字访问码" maxlength="4">
-            <div class="modal-btn-group">
-                <button class="modal-btn modal-confirm" id="confirmCode">确认</button>
-                <button class="modal-btn modal-close" id="closeModal">关闭</button>
-            </div>
-            <div class="error-tip" id="errorTip">访问码错误</div>
-        </div>
     </div>
 
     <!-- ========== 引入外部脚本 ========== -->
@@ -555,73 +469,32 @@
         });
     </script>
 
-    <!-- ========== 新增：访问码弹窗逻辑 ========== -->
+    <!-- ========== 修改：二维码显示/隐藏逻辑 ========== -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             // 获取元素
             const toggleBtn = document.getElementById('toggle-reward');
             const qrcodeArea = document.getElementById('reward-qrcodes');
-            const codeModal = document.getElementById('codeModal');
-            const accessCodeInput = document.getElementById('accessCode');
-            const confirmCodeBtn = document.getElementById('confirmCode');
-            const closeModalBtn = document.getElementById('closeModal');
-            const errorTip = document.getElementById('errorTip');
-            const hideQrcodeTip = document.getElementById('toggle-hide-qrcode'); // 新增：获取提示文字元素
+            const hideQrcodeTip = document.getElementById('toggle-hide-qrcode');
 
             // 保存原始文字内容
             const originalTitleText = toggleBtn.innerHTML;
             const originalTipText = hideQrcodeTip.innerHTML;
 
-            // 点击标题显示弹窗（仅在二维码隐藏时）
+            // 点击标题直接显示二维码
             toggleBtn.addEventListener('click', function() {
                 if (qrcodeArea.style.display !== 'flex') {
-                    codeModal.style.display = 'flex';
-                    accessCodeInput.value = ''; // 清空输入框
-                    errorTip.style.display = 'none'; // 隐藏错误提示
-                }
-            });
-
-            // 关闭弹窗
-            closeModalBtn.addEventListener('click', function() {
-                codeModal.style.display = 'none';
-                errorTip.style.display = 'none';
-            });
-
-            // 验证访问码
-            confirmCodeBtn.addEventListener('click', function() {
-                const inputCode = accessCodeInput.value.trim();
-                // 验证是否为4位数字且等于0721
-                if (inputCode === '0721') {
-                    codeModal.style.display = 'none';
                     qrcodeArea.style.display = 'flex';
-                    // 修改提示文字，提示用户可点击收起
                     hideQrcodeTip.innerHTML = '点击此处收起二维码 ✨';
-                } else {
-                    errorTip.style.display = 'block'; // 显示错误提示
                 }
             });
 
-            // 支持回车验证
-            accessCodeInput.addEventListener('keydown', function(e) {
-                if (e.key === 'Enter') {
-                    confirmCodeBtn.click();
-                }
-            });
-
-            // 点击弹窗遮罩关闭弹窗
-            codeModal.addEventListener('click', function(e) {
-                if (e.target === codeModal) {
-                    codeModal.style.display = 'none';
-                    errorTip.style.display = 'none';
-                }
-            });
-
-            // 新增：点击提示文字收起二维码
+            // 点击提示文字收起二维码
             hideQrcodeTip.addEventListener('click', function() {
                 if (qrcodeArea.style.display === 'flex') {
-                    qrcodeArea.style.display = 'none'; // 隐藏二维码
-                    hideQrcodeTip.innerHTML = originalTipText; // 恢复提示文字
-                    toggleBtn.innerHTML = originalTitleText; // 恢复标题文字
+                    qrcodeArea.style.display = 'none';
+                    hideQrcodeTip.innerHTML = originalTipText;
+                    toggleBtn.innerHTML = originalTitleText;
                 }
             });
         });
@@ -632,4 +505,3 @@
 </body>
 
 </html>
-
