@@ -6,8 +6,6 @@
     <title>感谢打赏 | 支持我的创作</title>
     <link rel="stylesheet" href="mdui-v1.0.2/css/mdui.min.css">
     <script src="mdui-v1.0.2/js/mdui.min.js"></script>
-    <script src="usr/themes/cuckoo/assets/js/cuckoo.min.js"></script>
-    
     <style>
         /* 全局样式重置与基础配置 */
         * {
@@ -152,20 +150,12 @@
             border: 0;
         }
 
-        /* 基础二维码样式 */
         .qrcode-dark {
             background: #000;
         }
+
         .qrcode-light {
             background: #fff;
-        }
-
-        /* ========== 新增：暗色模式下的二维码样式 ========== */
-        .dark-theme .qrcode-dark {
-            background: #fff !important;
-        }
-        .dark-theme .qrcode-light {
-            background: transparent !important;
         }
 
         .card-tip {
@@ -210,14 +200,9 @@
         }
 
         /* 移除弹窗相关样式（已删除弹窗，无需保留） */
-        /* 定义了 bg-disabled 类（背景禁用时的浅色底色），也会配合明暗模式生效 */
-        .bg-disabled {
-            background-image: none !important;
-            background-color: #f5f5f5 !important; /* 浅色默认背景 */
-        }
     </style>
 </head>
-<body class="mdui-theme-primary-pink mdui-theme-accent-blue">
+<body>
     <!-- 动态背景容器（底层） -->
     <div id="dynamic-background"></div>
 
@@ -259,10 +244,6 @@
     <div class="btn-group-fixed">
         <button class="mdui-textfield-close mdui-btn mdui-btn-icon mdui-ripple" id="toggle-tx" mdui-tooltip="{content: &#39;樱花落叶&#39;}">
             <i class="mdui-icon material-icons">filter_vintage</i>
-        </button>
-        <!-- ========== 修改：重写brightness按钮的点击事件 ========== -->
-        <button id="brightness" class="mdui-textfield-close mdui-btn mdui-btn-icon mdui-ripple" mdui-tooltip="{content: '切换日夜模式'}">
-            <i class="mdui-icon material-icons">brightness_5</i>
         </button>
     </div>
 
@@ -495,36 +476,6 @@
             const toggleBtn = document.getElementById('toggle-reward');
             const qrcodeArea = document.getElementById('reward-qrcodes');
             const hideQrcodeTip = document.getElementById('toggle-hide-qrcode');
-            const brightnessBtn = document.getElementById('brightness');
-            
-            // ========== 新增：检测当前是否为暗色模式 ==========
-            function checkDarkMode() {
-                // 检测Cuckoo主题的暗色模式标识（常见的存储键或DOM类）
-                const isDark = localStorage.getItem('darkMode') === 'true' || 
-                               document.body.classList.contains('dark') ||
-                               document.documentElement.classList.contains('dark');
-                // 同步二维码样式
-                if (isDark) {
-                    qrcodeArea.classList.add('dark-theme');
-                } else {
-                    qrcodeArea.classList.remove('dark-theme');
-                }
-            }
-
-            // 页面初始化时先检测一次模式
-            checkDarkMode();
-
-            // ========== 新增：重写明暗模式切换逻辑 ==========
-            brightnessBtn.addEventListener('click', function() {
-                // 执行原brightness函数
-                if (typeof brightness === 'function') {
-                    brightness();
-                }
-                // 延迟检测（等待主题切换完成）
-                setTimeout(checkDarkMode, 100);
-                // 刷新背景适配模式
-                setBackground(currentIndex);
-            });
 
             // 保存原始文字内容
             const originalTitleText = toggleBtn.innerHTML;
@@ -535,8 +486,6 @@
                 if (qrcodeArea.style.display !== 'flex') {
                     qrcodeArea.style.display = 'flex';
                     hideQrcodeTip.innerHTML = '点击此处收起二维码 ✨';
-                    // 显示时检测模式
-                    checkDarkMode();
                 }
             });
 
@@ -554,4 +503,5 @@
     <script src="usr/themes/cuckoo/assets/js/xf-MusicPlayer.min.js"></script>
     <div id="xf-MusicPlayer" data-cdnName="usr/themes/cuckoo/assets/js"  data-themeColor="xf-girlPink" data-songList="434256234" data-random="true"></div>
 </body>
+
 </html>
