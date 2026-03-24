@@ -142,18 +142,7 @@
    
   </style>
   
-<style>
-@keyframes fixed-scroll {
-  0% { transform: translateX(100%); }
-  100% { transform: translateX(-100%); }
-}
-.scroll-text {
-  display: inline-block;
-  white-space: nowrap;
-  animation: fixed-scroll 15s linear infinite;
-  /* 15s = 固定速度，和你原版 scrollamount="8" 完全一致 */
-}
-</style>
+<style>@keyframes marquee{0%{transform:translateX(0)}100%{transform:translateX(-100%)}}</style>
   
 </head>
 <body class="font-inter bg-neutral text-dark min-h-screen flex flex-col mdui-theme-primary-pink mdui-theme-accent-blue">
