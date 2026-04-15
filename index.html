@@ -667,7 +667,7 @@ function startSlideInterval() {
    });
    </script>
    <!--运行时间-->
-   本站已经运行?: <span id="span_dt_dt" style="color: #2F889A"></span>
+   本站已经运行了 : <span id="span_dt_dt" style="color: #2F889A"></span>
    <script>
        function show_date_time(){
        window.setTimeout("show_date_time()", 1000);
@@ -684,7 +684,7 @@ function startSlideInterval() {
        e_minsold=(e_hrsold-hrsold)*60;
        minsold=Math.floor((e_hrsold-hrsold)*60);
        seconds=Math.floor((e_minsold-minsold)*60);
-       span_dt_dt.innerHTML='<font style="color:#FF00FF">'+daysold+'</font> ?<font style="color:#FF00FF">'+hrsold+'</font> ?<font style="color:#FF00FF">'+minsold+'</font> ?<font style="color:#FF00FF">'+seconds+'</font> ?;
+       span_dt_dt.innerHTML='<font style="color:#FF00FF">'+daysold+'</font> 天 <font style="color:#FF00FF">'+hrsold+'</font> 时 <font style="color:#FF00FF">'+minsold+'</font> 分 <font style="color:#FF00FF">'+seconds+'</font> 秒';
        }
        show_date_time();
    </script>
