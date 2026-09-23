@@ -16,7 +16,6 @@
                   <div class="text-sm text-gray-500">2026-9-23</div>
                 </div>
                 <div class="update-item p-4 hover:bg-gray-50 cursor-pointer">
-                <div class="update-item active p-4 hover:bg-gray-50 cursor-pointer border-l-4 border-primary">
                   <div class="font-medium">学长毕业啦~</div>
                   <div class="text-sm text-gray-500">2026-9-23</div>
                 </div>
