@@ -215,5 +215,40 @@ function bindCopyButtons() {
   });
 }
 
-// 页面加载完成后生成资源卡片
-document.addEventListener('DOMContentLoaded', generateResourceCards);
+// 分类筛选功能（事件委托模式，确保动态生成的卡片也能被正确筛选）
+function initCategoryFilter() {
+  // 使用事件委托，在 document 上监听 category-btn 的点击
+  document.addEventListener('click', (e) => {
+    const button = e.target.closest('.category-btn');
+    if (!button) return;
+
+    const categoryButtons = document.querySelectorAll('.category-btn');
+
+    // 更新按钮样式
+    categoryButtons.forEach(btn => {
+      btn.classList.remove('active', 'bg-primary/70', 'hover:bg-primary/90', 'text-white', 'shadow-md');
+      btn.classList.add('bg-white/70', 'hover:bg-gray-50/90', 'text-gray-700', 'shadow-sm');
+    });
+
+    button.classList.add('active', 'bg-primary/70', 'hover:bg-primary/90', 'text-white', 'shadow-md');
+    button.classList.remove('bg-white/70', 'hover:bg-gray-50/90', 'text-gray-700', 'shadow-sm');
+
+    // 筛选资源（每次点击时实时查询当前所有卡片）
+    const category = button.getAttribute('data-category');
+    const resourceCards = document.querySelectorAll('.resource-card');
+
+    resourceCards.forEach(card => {
+      if (!category || card.getAttribute('data-categories').includes(category)) {
+        card.style.display = '';
+      } else {
+        card.style.display = 'none';
+      }
+    });
+  });
+}
+
+// 页面加载完成后生成资源卡片并初始化筛选功能
+document.addEventListener('DOMContentLoaded', () => {
+  generateResourceCards();
+  initCategoryFilter();
+});
