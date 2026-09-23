@@ -12,6 +12,10 @@
           <!-- 左侧列表 -->
           <div class="w-1/3 border-r overflow-y-auto">
             <div class="update-item active p-4 hover:bg-gray-50 cursor-pointer border-l-4 border-primary">
+              <div class="font-medium">V2.0.2.beta</div>
+              <div class="text-sm text-gray-500">2026-9-23</div>
+            </div>
+            <div class="update-item p-4 hover:bg-gray-50 cursor-pointer">
               <div class="font-medium">学长毕业啦~</div>
               <div class="text-sm text-gray-500">2026-9-23</div>
             </div>
@@ -44,7 +48,20 @@
           <!-- 右侧内容 -->
           <div class="w-2/3 p-6 overflow-y-auto">
             <div class="update-content active">
-              <h4 class="text-lg font-bold mb-3">我们毕业啦！</h4>
+              <h4 class="text-lg font-bold mb-3">V2.0.2.beta 更新内容</h4>
+              <ul class="space-y-2">
+                <li class="flex items-start">
+                  <i class="fa fa-exclamation-triangle text-yellow-500 mt-1 mr-2"></i>
+                  <span>1、修复筛选资源按钮无法正常使用的问题，如组件无法加载，请切换较好的网络环境或加速GitHub并重新加载。</span>
+                </li>
+                <li class="flex items-start">
+                  <i class="	fa fa-volume-up text-green-500 mt-1 mr-2"></i>
+                  <span>2、打赏网页正式上线，位于”更多资源链接-投喂大佬”，但这并非强制性的，白嫖也可以正常使用！</span>
+                </li>
+              </ul>
+            </div>
+            <div class="update-content hidden">
+              <h4 class="text-lg font-bold mb-3">学长毕业啦~</h4>
               <ul class="space-y-2">
                 <li class="flex items-start">
                   各位一直支持、使用本站的小伙伴们：
