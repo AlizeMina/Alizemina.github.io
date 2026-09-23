@@ -688,7 +688,7 @@ function startSlideInterval() {
        }
        show_date_time();
    </script>
-          © 2026 学习资源整合平台V2.0.1.beta | 仅供学习交流使用 | by阿离Alize
+          © 2026 学习资源整合平台V2.0.2.beta | 仅供学习交流使用 | by阿离Alize
         </div>
       </div>
     </div>
@@ -794,34 +794,8 @@ function startSlideInterval() {
     
     // 复制功能已在resources.js中实现
 
-    // 分类筛选功能
-    const categoryButtons = document.querySelectorAll('.category-btn');
-    const resourceCards = document.querySelectorAll('.resource-card');
-    
-    categoryButtons.forEach(button => {
-      button.addEventListener('click', () => {
-        // 更新按钮样式
-        categoryButtons.forEach(btn => {
-          btn.classList.remove('active', 'bg-primary/70', 'hover:bg-primary/90', 'text-white', 'shadow-md');
-          btn.classList.add('bg-white/70', 'hover:bg-gray-50/90', 'text-gray-700', 'shadow-sm');
-        });
-        
-        button.classList.add('active', 'bg-primary/70', 'hover:bg-primary/90', 'text-white', 'shadow-md');  
-        button.classList.remove('bg-white/70', 'hover:bg-gray-50/90', 'text-gray-700', 'shadow-sm');  
-        
-        // 筛选资源
-        const category = button.getAttribute('data-category');
-        
-        resourceCards.forEach(card => {
-          if (!category || card.getAttribute('data-categories').includes(category)) {
-            card.style.display = 'block';
-          } else {
-            card.style.display = 'none';
-          }
-        });
-      });
-    });
-    
+    // 分类筛选功能已迁移至 resources.js
+
     // --- 修复和优化的代码开始 ---
 
     // 统一关闭模态框的函数
