@@ -12,7 +12,11 @@
           <!-- 左侧列表 -->
           <div class="w-1/3 border-r overflow-y-auto">
             <div class="update-item active p-4 hover:bg-gray-50 cursor-pointer border-l-4 border-primary">
-              <div class="font-medium">V2.0.1.beta</div>
+              <div class="font-medium">学长毕业啦~</div>
+              <div class="text-sm text-gray-500">2026-9-23</div>
+            </div>
+            <div class="update-item p-4 hover:bg-gray-50 cursor-pointer">
+            <div class="font-medium">V2.0.1.beta</div>
               <div class="text-sm text-gray-500">2026-1-16</div>
             </div>
             <div class="update-item p-4 hover:bg-gray-50 cursor-pointer">
@@ -40,6 +44,32 @@
           <!-- 右侧内容 -->
           <div class="w-2/3 p-6 overflow-y-auto">
             <div class="update-content active">
+              <h4 class="text-lg font-bold mb-3">我们毕业啦！</h4>
+              <ul class="space-y-2">
+                <li class="flex items-start">
+                  各位一直支持、使用本站的小伙伴们：
+                </li>
+                <li class="flex items-start">
+                  伴随着毕业季的落幕，长期负责本站搭建、运营与更新的学长已然顺利毕业、离校奔赴新的旅程。也正因如此，本站将正式进入长期静态维护阶段。
+                </li>
+                <li class="flex items-start">
+                  在这里和大家坦诚说明，往后我们将减少新功能的开发与迭代。网站后续的所有更新，仅针对目前已知的程序漏洞、运行BUG进行修复维护，最大程度保障网站基础功能稳定可用。
+                </li>
+                <li class="flex items-start">
+                  若大家在后续使用过程中，遇到页面异常、功能故障、程序bug等各类问题，欢迎通过网站页脚预留的联系方式向我们反馈。我们会定期查看留言，在能力范围内及时修复问题，维持网站的正常运行。
+                </li>
+                <li class="flex items-start">
+                  从建站之初到如今，感谢每一位同学的陪伴、使用与包容。虽然无法继续为大家带来全新的功能体验，但我们会坚守初心，做好基础维护工作。
+                </li>
+                <li class="flex items-start">
+                  云帆自此遥征，愿君行过千山，仍怀明月，岁岁安然，静候萍逢。
+                </li>
+                <li class="flex items-start">
+                  本站维护团队 敬上
+                </li>
+              </ul>
+            </div>
+            <div class="update-content hidden">
               <h4 class="text-lg font-bold mb-3">V2.0.1.beta 更新内容（V2.1.0.HDBCNAL更新内容）</h4>
               <ul class="space-y-2">
                 <li class="flex items-start">
